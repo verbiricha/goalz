@@ -286,14 +286,10 @@ function CreateGoal() {
                 connected to their profiles.{" "}
                 <Link href="https://www.walletofsatoshi.com/" isExternal>
                   Wallet of Satoshi
-                </Link>
-                ,{" "}
-                <Link href="https://getalby.com/" isExternal>
-                  Alby
                 </Link>{" "}
                 and{" "}
-                <Link href="https://www.mutinywallet.com/" isExternal>
-                  Mutiny
+                <Link href="https://getalby.com/" isExternal>
+                  Alby
                 </Link>{" "}
                 are popular options.
               </Text>
