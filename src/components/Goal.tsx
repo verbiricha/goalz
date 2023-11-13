@@ -591,11 +591,27 @@ function getRandomValueMappedTo100() {
   return nearestMultipleOf100;
 }
 
+function getRandomNumberInRangeWithIncrements(
+  base = 42,
+  increment = 16,
+  maxIncrement = 2,
+) {
+  const randomIncrement = Math.floor(Math.random() * maxIncrement);
+  const result = base + randomIncrement * increment;
+  return result;
+}
+
 export function GoalBubble({ event }: { event: NDKEvent }) {
   const { image } = useGoalInfo(event);
+
   const multipleOf100 = useMemo(() => {
     return getRandomValueMappedTo100();
   }, [event]);
+
+  const size = useMemo(() => {
+    return getRandomNumberInRangeWithIncrements();
+  }, [event]);
+
   return (
     <Box
       border="2px solid"
@@ -605,8 +621,8 @@ export function GoalBubble({ event }: { event: NDKEvent }) {
       borderRadius="50%"
     >
       <Image
-        width="42px"
-        height="42px"
+        width={`${size}px`}
+        height={`${size}px`}
         src={image}
         borderRadius="50%"
         border="2px solid"
