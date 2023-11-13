@@ -3,6 +3,7 @@ import { FormattedDate } from "react-intl";
 import {
   Flex,
   Box,
+  Spinner,
   Card,
   CardBody,
   CardFooter,
@@ -581,5 +582,5 @@ export function Goal({ id, author, relays }: GoalProps) {
     },
     relays,
   );
-  return event ? <GoalDetail event={event} /> : null;
+  return event ? <GoalDetail event={event} /> : <Spinner />;
 }
