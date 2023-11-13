@@ -584,3 +584,34 @@ export function Goal({ id, author, relays }: GoalProps) {
   );
   return event ? <GoalDetail event={event} /> : <Spinner />;
 }
+
+function getRandomValueMappedTo100() {
+  const randomValue = Math.floor(Math.random() * (900 - 100 + 1)) + 100;
+  const nearestMultipleOf100 = Math.round(randomValue / 100) * 100;
+  return nearestMultipleOf100;
+}
+
+export function GoalBubble({ event }: { event: NDKEvent }) {
+  const { image } = useGoalInfo(event);
+  const multipleOf100 = useMemo(() => {
+    return getRandomValueMappedTo100();
+  }, [event]);
+  return (
+    <Box
+      border="2px solid"
+      borderColor={`${
+        multipleOf100 > 500 ? "orange" : "brand"
+      }.${multipleOf100}`}
+      borderRadius="50%"
+    >
+      <Image
+        width="42px"
+        height="42px"
+        src={image}
+        borderRadius="50%"
+        border="2px solid"
+        borderColor="chakra-body-bg"
+      />
+    </Box>
+  );
+}

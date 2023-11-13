@@ -1,6 +1,13 @@
-import { Stack, Heading, Text, Tag, Button } from "@chakra-ui/react";
+import {
+  Stack,
+  StackProps,
+  Heading,
+  Text,
+  Tag,
+  Button,
+} from "@chakra-ui/react";
 
-interface CallToActionProps {
+interface CallToActionProps extends StackProps {
   label: string;
   title: string;
   description: string;
@@ -14,6 +21,7 @@ export default function CallToAction({
   description,
   ctaText,
   ctaAction,
+  ...rest
 }: CallToActionProps) {
   return (
     <Stack
@@ -25,6 +33,7 @@ export default function CallToAction({
         md: "md",
         lg: "lg",
       }}
+      {...rest}
     >
       <Tag>{label}</Tag>
       <Heading textAlign="center">{title}</Heading>
