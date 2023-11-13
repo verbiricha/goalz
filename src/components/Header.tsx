@@ -1,7 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 
 import Link from "@ngine/components/Link";
-import Rates from "./Rates";
 import Login from "./Login";
 
 export default function Header() {
@@ -19,7 +18,6 @@ export default function Header() {
         Goalz
       </Link>
       <Flex align="center" gap={{ base: 2, md: 3, lg: 4, xl: 6 }}>
-        <Rates />
         <Login />
       </Flex>
       {/*
