@@ -24,6 +24,7 @@ import Link from "@ngine/components/Link";
 import { GOAL } from "@ngine/const";
 import useSession from "@ngine/hooks/useSession";
 import useRelays from "@ngine/hooks/useRelays";
+import ImageUploader from "@ngine/components/ImageUploader";
 
 import { GoalPreview, Shares } from "./Goal";
 import { ratesAtom, fiatCurrencyAtom } from "../state";
@@ -227,11 +228,7 @@ function CreateGoal() {
           </FormControl>
           <FormControl>
             <Text>Image URL (optional)</Text>
-            <Input
-              placeholder="https://"
-              value={image}
-              onChange={(ev) => setImage(ev.target.value)}
-            />
+            <ImageUploader showPreview={false} onImageUpload={setImage} />
           </FormControl>
           <FormControl>
             <FormLabel>Expiry (optional)</FormLabel>

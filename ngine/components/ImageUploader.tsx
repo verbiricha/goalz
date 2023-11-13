@@ -42,11 +42,13 @@ async function voidCatUpload(file: File): Promise<UploadResult> {
 }
 
 interface ImageUploaderProps {
+  showPreview?: boolean;
   onImageUpload: (img: string) => void;
   defaultImage?: string;
 }
 
 export default function ImageUploader({
+  showPreview = true,
   onImageUpload,
   defaultImage,
 }: ImageUploaderProps) {
@@ -90,7 +92,7 @@ export default function ImageUploader({
 
   return (
     <Stack align="center" gap={4}>
-      <Avatar key={avatar} size="xl" src={avatar} />
+      {showPreview && <Avatar key={avatar} size="xl" src={avatar} />}
       <Input
         isDisabled={isUploading}
         type="file"
