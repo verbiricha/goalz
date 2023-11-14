@@ -23,13 +23,14 @@ import {
 //import { NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKEvent } from "@nostr-dev-kit/ndk";
 
+import { GOAL } from "../const";
+
 import User from "@ngine/components/User";
 import FollowButton from "@ngine/components/FollowButton";
 import useProfile from "@ngine/nostr/useProfile";
 import useEvents from "@ngine/nostr/useEvents";
 import useCopy from "@ngine/hooks/useCopy";
 import useSession from "@ngine/hooks/useSession";
-import { GOAL } from "@ngine/const";
 import { Zap, User as UserIcon, Copy, Key } from "@ngine/icons";
 import ZapModal from "@ngine/components/ZapModal";
 

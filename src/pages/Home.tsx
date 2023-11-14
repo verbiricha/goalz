@@ -15,11 +15,11 @@ import FeaturedGoals from "../components/FeaturedGoals";
 import Features from "../components/Features";
 import { GoalBubble } from "../components/Goal";
 import { NEW_GOAL } from "../routes";
+import { GOAL } from "../const";
 
 import Link from "@ngine/components/Link";
 import useEvents from "@ngine/nostr/useEvents";
 import useSession from "@ngine/hooks/useSession";
-import { GOAL } from "@ngine/const";
 
 const MotionBox = motion(Box);
 

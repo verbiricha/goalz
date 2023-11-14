@@ -19,8 +19,9 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 
+import { GOAL } from "../const";
+
 import Avatar from "@ngine/components/Avatar";
-import { GOAL } from "@ngine/const";
 import useSession from "@ngine/hooks/useSession";
 import useRelays from "@ngine/hooks/useRelays";
 import ImageUploader from "@ngine/components/ImageUploader";
