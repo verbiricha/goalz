@@ -8,6 +8,7 @@ import Avatar from "./Avatar";
 import Link from "./Link";
 
 interface UserProps extends AvatarProps {
+  link?: string;
   showUsername?: boolean;
   pubkey: string;
 }
@@ -17,18 +18,20 @@ function shortenPubkey(pk: string) {
 }
 
 export default function User({
+  link,
   pubkey,
   showUsername = true,
   ...rest
 }: UserProps) {
   const profile = useProfile(pubkey);
-  const npub = useMemo(() => {
-    return nip19.npubEncode(pubkey);
-  }, [pubkey]);
+  const url = useMemo(() => {
+    if (link) return link;
+    return `/p/${nip19.npubEncode(pubkey)}`;
+  }, [pubkey, link]);
   return (
-    <Link href={`/p/${npub}`} color="chakra-body-text">
+    <Link href={url} color="chakra-body-text">
       <HStack>
-        <Avatar pubkey={pubkey} size="sm" {...rest} />
+        <Avatar link={link} pubkey={pubkey} size="sm" {...rest} />
         {showUsername && (
           <Text fontSize={rest.fontSize} fontWeight={rest.fontWeight}>
             {profile?.name || shortenPubkey(pubkey)}
