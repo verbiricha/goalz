@@ -20,7 +20,6 @@ import {
 } from "@chakra-ui/react";
 
 import Avatar from "@ngine/components/Avatar";
-import Link from "@ngine/components/Link";
 import { GOAL } from "@ngine/const";
 import useSession from "@ngine/hooks/useSession";
 import useRelays from "@ngine/hooks/useRelays";
