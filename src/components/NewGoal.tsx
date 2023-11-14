@@ -218,7 +218,7 @@ function CreateGoal() {
             />
           </FormControl>
           <FormControl>
-            <Text>URL (optional)</Text>
+            <FormLabel>URL (optional)</FormLabel>
             <Input
               placeholder="https://"
               value={url}
@@ -226,7 +226,7 @@ function CreateGoal() {
             />
           </FormControl>
           <FormControl>
-            <Text>Image URL (optional)</Text>
+            <FormLabel>Image (optional)</FormLabel>
             <ImageUploader showPreview={false} onImageUpload={setImage} />
           </FormControl>
           <FormControl>
