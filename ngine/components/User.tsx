@@ -9,7 +9,6 @@ import Link from "./Link";
 
 interface UserProps extends AvatarProps {
   link?: string;
-  showUsername?: boolean;
   pubkey: string;
 }
 
@@ -17,12 +16,7 @@ function shortenPubkey(pk: string) {
   return `${pk.slice(0, 8)}:${pk.slice(-8)}`;
 }
 
-export default function User({
-  link,
-  pubkey,
-  showUsername = true,
-  ...rest
-}: UserProps) {
+export default function User({ link, pubkey, ...rest }: UserProps) {
   const profile = useProfile(pubkey);
   const url = useMemo(() => {
     if (link) return link;
@@ -32,11 +26,9 @@ export default function User({
     <Link href={url} color="chakra-body-text">
       <HStack>
         <Avatar link={link} pubkey={pubkey} size="sm" {...rest} />
-        {showUsername && (
-          <Text fontSize={rest.fontSize} fontWeight={rest.fontWeight}>
-            {profile?.name || shortenPubkey(pubkey)}
-          </Text>
-        )}
+        <Text fontSize={rest.fontSize} fontWeight={rest.fontWeight}>
+          {profile?.name || shortenPubkey(pubkey)}
+        </Text>
       </HStack>
     </Link>
   );
