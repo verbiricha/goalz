@@ -19,16 +19,15 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 
-import { GOAL } from "../const";
-
 import Avatar from "@ngine/components/Avatar";
 import useSession from "@ngine/hooks/useSession";
 import useRelays from "@ngine/hooks/useRelays";
 import ImageUploader from "@ngine/components/ImageUploader";
 
-import { GoalPreview, Shares } from "./Goal";
-import { ratesAtom, fiatCurrencyAtom } from "../state";
-import { convertSatsToFiat, convertFiatToSats } from "../money";
+import { GoalPreview, Shares } from "@goalz/components/Goal";
+import { GOAL } from "@goalz/const";
+import { ratesAtom, fiatCurrencyAtom } from "@goalz/state";
+import { convertSatsToFiat, convertFiatToSats } from "@goalz/money";
 
 function getMinimumDate() {
   var currentDate = new Date();

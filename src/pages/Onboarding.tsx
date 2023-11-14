@@ -1,9 +1,9 @@
 import { Flex } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
-import Onboarding from "@ngine/components/Onboarding";
+import { HOME } from "@goalz/routes";
 
-import { HOME } from "../routes";
+import Onboarding from "@ngine/components/Onboarding";
 
 export default function OnboardingPage() {
   const navigate = useNavigate();

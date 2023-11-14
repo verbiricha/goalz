@@ -22,7 +22,8 @@ import Avatar from "@ngine/components/Avatar";
 import useSession from "@ngine/hooks/useSession";
 import { ChevronDown } from "@ngine/icons";
 import { User, Target, Close } from "@ngine/icons";
-import LoginDialog from "./LoginDialog";
+
+import LoginDialog from "@goalz/components/LoginDialog";
 //import CurrencySwitch from "./CurrencySwitch";
 
 interface UserMenuProps {

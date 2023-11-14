@@ -25,6 +25,7 @@
     "baseUrl": ".",
     "paths": {
       "@ngine/*": ["./ngine/*"],
+      "@goalz/*": ["./src/*"],
     }
   },
   "include": ["src"],

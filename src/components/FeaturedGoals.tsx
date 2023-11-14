@@ -1,7 +1,7 @@
 import { Flex, HStack } from "@chakra-ui/react";
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 
-import { GoalCard } from "./Goal";
+import { GoalCard } from "@goalz/components/Goal";
 
 interface FeaturedGoalsProps {
   events: NDKEvent[];

@@ -2,8 +2,8 @@ import { useMemo } from "react";
 import { nip19 } from "nostr-tools";
 import { useParams, Navigate } from "react-router-dom";
 
-import { HOME } from "../routes";
-import { Goal } from "../components/Goal";
+import { Goal } from "@goalz/components/Goal";
+import { HOME } from "@goalz/routes";
 
 export default function GoalPage() {
   const { nevent } = useParams();

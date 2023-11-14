@@ -3,7 +3,7 @@ import { useAtomValue } from "jotai";
 import { Text } from "@chakra-ui/react";
 import { FormattedNumber } from "react-intl";
 
-import { rateSymbolAtom, ratesAtom } from "../state";
+import { rateSymbolAtom, ratesAtom } from "@goalz/state";
 
 export default function Rates() {
   const rateSymbol = useAtomValue(rateSymbolAtom);

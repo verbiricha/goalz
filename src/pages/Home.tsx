@@ -10,12 +10,12 @@ import { useNavigate } from "react-router-dom";
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 import { motion } from "framer-motion";
 
-import CallToAction from "../components/CallToAction";
-import FeaturedGoals from "../components/FeaturedGoals";
-import Features from "../components/Features";
-import { GoalBubble } from "../components/Goal";
-import { NEW_GOAL } from "../routes";
-import { GOAL } from "../const";
+import CallToAction from "@goalz/components/CallToAction";
+import FeaturedGoals from "@goalz/components/FeaturedGoals";
+import Features from "@goalz/components/Features";
+import { GoalBubble } from "@goalz/components/Goal";
+import { NEW_GOAL } from "@goalz/routes";
+import { GOAL } from "@goalz/const";
 
 import Link from "@ngine/components/Link";
 import useEvents from "@ngine/nostr/useEvents";

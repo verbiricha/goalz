@@ -1,7 +1,7 @@
 import { useAtom, useAtomValue } from "jotai";
 import { HStack, Switch, Text } from "@chakra-ui/react";
 
-import { currencyAtom, fiatCurrencyAtom } from "../state";
+import { currencyAtom, fiatCurrencyAtom } from "@goalz/state";
 
 export default function CurrencySwitch() {
   const fiatCurrency = useAtomValue(fiatCurrencyAtom);

@@ -23,8 +23,6 @@ import {
 //import { NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKEvent } from "@nostr-dev-kit/ndk";
 
-import { GOAL } from "../const";
-
 import User from "@ngine/components/User";
 import FollowButton from "@ngine/components/FollowButton";
 import useProfile from "@ngine/nostr/useProfile";
@@ -34,7 +32,8 @@ import useSession from "@ngine/hooks/useSession";
 import { Zap, User as UserIcon, Copy, Key } from "@ngine/icons";
 import ZapModal from "@ngine/components/ZapModal";
 
-import { GoalCard } from "./Goal";
+import { GOAL } from "@goalz/const";
+import { GoalCard } from "@goalz/components/Goal";
 
 interface ProfileProps {
   pubkey: string;

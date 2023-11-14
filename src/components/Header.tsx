@@ -1,7 +1,8 @@
 import { Flex } from "@chakra-ui/react";
 
+import Login from "@goalz/components/Login";
+
 import Link from "@ngine/components/Link";
-import Login from "./Login";
 
 export default function Header() {
   return (

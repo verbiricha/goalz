@@ -3,8 +3,8 @@ import { useParams, Navigate } from "react-router-dom";
 import { nip19 } from "nostr-tools";
 import { Flex } from "@chakra-ui/react";
 
-import { HOME } from "../routes";
-import Profile from "../components/Profile";
+import { HOME } from "@goalz/routes";
+import Profile from "@goalz/components/Profile";
 
 export default function ProfilePage() {
   const { npub } = useParams();

@@ -38,8 +38,8 @@ import {
 import { DEFAULT_RELAYS } from "@ngine/const";
 import ZapButton from "@ngine/components/ZapButton";
 
-import ExternalLink from "./ExternalLink";
-import { formatSatAmount, formatRelativeTime } from "../format";
+import ExternalLink from "@goalz/components/ExternalLink";
+import { formatSatAmount, formatRelativeTime } from "@goalz/format";
 
 interface GoalInfo {
   link: string;

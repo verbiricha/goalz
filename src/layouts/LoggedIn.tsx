@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 import useSession from "@ngine/hooks/useSession";
 
-import LoginDialog from "../components/LoginDialog";
+import LoginDialog from "@goalz/components/LoginDialog";
 
 // todo: get relays and contacts
 function LoggedInLayout() {

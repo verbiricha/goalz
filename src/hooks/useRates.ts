@@ -3,7 +3,7 @@ import { NDKKind } from "@nostr-dev-kit/ndk";
 
 import useEvents from "@ngine/nostr/useEvents";
 
-import type { RateSymbol, Rates, FiatCurrency } from "../money";
+import type { RateSymbol, Rates, FiatCurrency } from "@goalz/money";
 
 const SNORT_PUBKEY =
   "84de35e2584d2b144aae823c9ed0b0f3deda09648530b93d1a2a146d1dea9864";

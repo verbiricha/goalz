@@ -11,7 +11,8 @@ import {
 
 import Link from "@ngine/components/Link";
 import { useExtensionLogin } from "@ngine/context";
-import { ONBOARDING } from "../routes";
+
+import { ONBOARDING } from "@goalz/routes";
 
 interface LoginDialogProps {
   onLogin?: () => void;

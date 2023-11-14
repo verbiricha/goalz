@@ -3,8 +3,8 @@ import { useAtomValue } from "jotai";
 import { Stack, Heading, Text, AvatarGroup } from "@chakra-ui/react";
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 
-import { GoalCard } from "./Goal";
-import { GOAL } from "../const";
+import { GoalCard } from "@goalz/components/Goal";
+import { GOAL } from "@goalz/const";
 
 import useEvents from "@ngine/nostr/useEvents";
 import Avatar from "@ngine/components/Avatar";

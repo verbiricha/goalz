@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 
-import Goals from "../components/Goals";
+import Goals from "@goalz/components/Goals";
 
 export default function AllPage() {
   return (
