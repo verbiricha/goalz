@@ -109,15 +109,23 @@ function WalletStep() {
         <FormHelperText>
           A lightning address allows you to receive payments from anyone in the
           world. Some popular options include{" "}
-          <Link isExternal href="https://getalby.com/">
+          <Link isExternal href="https://getalby.com">
             Alby
           </Link>
           ,{" "}
-          <Link isExternal href="https://www.walletofsatoshi.com/">
+          <Link isExternal href="https://zeusln.app">
+            Zeus
+          </Link>
+          ,{" "}
+          <Link isExternal href="https://ln.tips">
+            ln.tips
+          </Link>
+          ,{" "}
+          <Link isExternal href="https://www.walletofsatoshi.com">
             Wallet of Satoshi
           </Link>{" "}
           and{" "}
-          <Link isExternal href="https://strike.me/">
+          <Link isExternal href="https://strike.me">
             Strike
           </Link>
           .

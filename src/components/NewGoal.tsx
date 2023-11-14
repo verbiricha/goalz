@@ -280,15 +280,7 @@ function CreateGoal() {
             <FormHelperText>
               <Text fontSize="xs">
                 Please make sure the beneficiaries have a lightning wallet
-                connected to their profiles.{" "}
-                <Link href="https://www.walletofsatoshi.com/" isExternal>
-                  Wallet of Satoshi
-                </Link>{" "}
-                and{" "}
-                <Link href="https://getalby.com/" isExternal>
-                  Alby
-                </Link>{" "}
-                are popular options.
+                connected to their profiles.
               </Text>
             </FormHelperText>
           </FormControl>
