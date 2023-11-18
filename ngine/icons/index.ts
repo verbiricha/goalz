@@ -16,3 +16,4 @@ export * from "./Image";
 export * from "./ChevronDown";
 export * from "./Close";
 export * from "./Key";
+export * from "./Logo";

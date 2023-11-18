@@ -28,7 +28,7 @@ import {
   RadioGroup,
   Radio,
 } from "@chakra-ui/react";
-import { generatePrivateKey } from "nostr-tools";
+import { generatePrivateKey, getPublicKey } from "nostr-tools";
 import { NDKEvent, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import("@getalby/bitcoin-connect-react"); // enable NWC
 
@@ -195,10 +195,13 @@ function SingleZapModal({ pubkey, event, isOpen, onClose }: ZapModalProps) {
     onClose();
   }
 
-  async function zapRequest() {
+  async function zapRequest(sk: string) {
     try {
+      const author =
+        isAnon || !session?.pubkey ? getPublicKey(sk) : session?.pubkey;
       const zr = makeZapRequest({
-        pubkey,
+        pubkey: author,
+        p: pubkey,
         event,
         comment,
         amount,
@@ -206,8 +209,7 @@ function SingleZapModal({ pubkey, event, isOpen, onClose }: ZapModalProps) {
       });
       let signed;
       if (isAnon) {
-        const pk = generatePrivateKey();
-        signed = await sign(zr, new NDKPrivateKeySigner(pk));
+        signed = await sign(zr, new NDKPrivateKeySigner(sk));
       } else {
         signed = await sign(zr);
       }
@@ -225,7 +227,8 @@ function SingleZapModal({ pubkey, event, isOpen, onClose }: ZapModalProps) {
     }
     try {
       setIsFetchingInvoice(true);
-      const zr = await zapRequest();
+      const sk = generatePrivateKey();
+      const zr = await zapRequest(sk);
       const invoice = await loadInvoice(lnurl, amount, comment, zr);
       if (!invoice?.pr) {
         toast({
@@ -409,10 +412,13 @@ function MultiZapModal({
     onClose();
   }
 
-  async function zapRequest(pubkey: string, amount: number) {
+  async function zapRequest(sk: string, p: string, amount: number) {
     try {
+      const author =
+        isAnon || !session?.pubkey ? getPublicKey(sk) : session?.pubkey;
       const zr = makeZapRequest({
-        pubkey,
+        pubkey: author,
+        p,
         amount,
         relays,
         event,
@@ -420,8 +426,7 @@ function MultiZapModal({
       });
       let signed;
       if (isAnon) {
-        const pk = generatePrivateKey();
-        signed = await sign(zr, new NDKPrivateKeySigner(pk));
+        signed = await sign(zr, new NDKPrivateKeySigner(sk));
       } else {
         signed = await sign(zr);
       }
@@ -435,11 +440,12 @@ function MultiZapModal({
 
   async function onZap() {
     try {
+      const sk = generatePrivateKey();
       setIsFetchingInvoices(true);
       const fetchedInvoices = await Promise.all(
         zapSplits.map(async ({ pubkey, percentage }, idx) => {
           const gets = Math.round(amount * (percentage / 100));
-          const zr = await zapRequest(pubkey, gets);
+          const zr = await zapRequest(sk, pubkey, gets);
           // @ts-ignore
           return await loadInvoice(lnurls[idx], gets, comment, zr);
         }),
@@ -530,7 +536,7 @@ function MultiZapModal({
                 <Textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  placeholder="Comment (optional)"
+                  placeholder="Leave a comment (optional)"
                 />
               </>
             )}

@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { sha256 } from "@noble/hashes/sha256";
 
 import {
   NDKEvent,
@@ -10,6 +11,22 @@ import { uniqBy } from "lodash";
 
 import { useNDK } from "@ngine/context";
 
+interface MyObject {
+  [key: string]: any;
+}
+
+export function hash(obj: MyObject): string {
+  const jsonString = JSON.stringify(obj);
+
+  const hashBuffer = sha256(new TextEncoder().encode(jsonString));
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+
+  return hashHex;
+}
+
 export default function useEvents(
   filter: NDKFilter | NDKFilter[],
   opts?: NDKSubscriptionOptions,
@@ -18,6 +35,9 @@ export default function useEvents(
   const ndk = useNDK();
   const [eose, setEose] = useState(false);
   const [events, setEvents] = useState<NDKEvent[]>([]);
+  const id = useMemo(() => {
+    return hash(filter);
+  }, [filter]);
 
   useEffect(() => {
     if (filter) {
@@ -39,7 +59,7 @@ export default function useEvents(
         sub.stop();
       };
     }
-  }, []);
+  }, [id]);
 
-  return { eose, events };
+  return { id, eose, events };
 }

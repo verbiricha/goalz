@@ -5,25 +5,28 @@ import type { NDKEvent, NostrEvent } from "@nostr-dev-kit/ndk";
 import { unixNow } from "@ngine/time";
 
 export function makeZapRequest({
+  p,
   pubkey,
   amount,
   relays,
   event,
   comment,
 }: {
+  p: string;
   pubkey: string;
   amount: number;
   relays: string[];
   event?: NDKEvent;
   comment?: string;
-}): Omit<NostrEvent, "pubkey"> {
+}): NostrEvent {
   const msats = amount * 1000;
   return {
+    pubkey,
     kind: NDKKind.ZapRequest,
     created_at: unixNow(),
     content: comment || "",
     tags: [
-      ["p", pubkey],
+      ["p", p],
       ...[event ? event.tagReference() : []],
       ["amount", String(msats)],
       ["relays", ...relays],

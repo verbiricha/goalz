@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Stack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
@@ -5,8 +6,11 @@ import CallToAction from "@goalz/components/CallToAction";
 import OrbitingGoals from "@goalz/components/OrbitingGoals";
 import FeaturedGoals from "@goalz/components/FeaturedGoals";
 import Features from "@goalz/components/Features";
+import Support from "@goalz/components/Support";
+import useSupporters from "@goalz/hooks/useSupporters";
 import { NEW_GOAL } from "@goalz/routes";
-import { GOAL } from "@goalz/const";
+import { GOAL, HEYA_PUBKEY } from "@goalz/const";
+import { dedupeByPubkey } from "@goalz/utils";
 
 import Link from "@ngine/components/Link";
 import useEvents from "@ngine/nostr/useEvents";
@@ -16,16 +20,26 @@ export default function Home() {
   const navigate = useNavigate();
   const [session] = useSession();
   const isLoggedOut = session === null;
-  const { events, eose } = useEvents({
-    kinds: [GOAL],
-    ids: [
-      "ebe64e839a6f8391bdfd0d7d8950588f296e8e00eb271cda36e3d1af610e9732",
-      "bd3b899997cd4ce115532a84eabe598bb7547cab8f44b06812b2306d64761096",
-      "9b734bc67402c034857ec3f2ecd8e74d61d38f46505067c5e53986cf70a0c4f6",
-      "25ade1845b93c5cd47d7b2c3f1bc622ada3bada5b87a0fd3714fd5a089d868c4",
-      "060f4f06455ee0a87db48f7d5f23b532bcc133cea7dd3bc9f2a20226f1bf2705",
-    ],
-  });
+  const { events: supporters } = useSupporters(HEYA_PUBKEY);
+  const { events, eose } = useEvents([
+    {
+      kinds: [GOAL],
+      ids: [
+        "ebe64e839a6f8391bdfd0d7d8950588f296e8e00eb271cda36e3d1af610e9732",
+        "bd3b899997cd4ce115532a84eabe598bb7547cab8f44b06812b2306d64761096",
+        "9b734bc67402c034857ec3f2ecd8e74d61d38f46505067c5e53986cf70a0c4f6",
+        "25ade1845b93c5cd47d7b2c3f1bc622ada3bada5b87a0fd3714fd5a089d868c4",
+        "060f4f06455ee0a87db48f7d5f23b532bcc133cea7dd3bc9f2a20226f1bf2705",
+      ],
+    },
+    {
+      kinds: [GOAL],
+      authors: supporters.map((ev) => ev.pubkey),
+    },
+  ]);
+  const featuredGoals = useMemo(() => {
+    return dedupeByPubkey(events);
+  }, [events]);
   const showAnimation = eose;
 
   function createZapGoal() {
@@ -34,7 +48,7 @@ export default function Home() {
 
   return (
     <Stack align="center" spacing={20} mt={12}>
-      {showAnimation && <OrbitingGoals events={events} />}
+      {showAnimation && <OrbitingGoals events={featuredGoals} />}
       <CallToAction
         mt={showAnimation ? "-12em" : "0"}
         label="Lightning Fundraisers"
@@ -43,7 +57,7 @@ export default function Home() {
         ctaText="Create a goal"
         ctaAction={createZapGoal}
       />
-      <FeaturedGoals events={events} />
+      <FeaturedGoals events={featuredGoals} />
       {!isLoggedOut && (
         <Link href="/all" mt={-16}>
           See all active goals
@@ -57,6 +71,7 @@ export default function Home() {
         ctaAction={createZapGoal}
       />
       <Features />
+      <Support />
       <CallToAction
         label="Your dreams await"
         title="Get the boost you need. Start a goal for yourself or someone you know."

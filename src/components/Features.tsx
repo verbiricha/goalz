@@ -16,17 +16,17 @@ const features = [
   {
     icon: FaceContent,
     title: "No email signups",
-    description: `No account necessary! Goalz is built on top of the nostr protocol which uses a private key for your “password”`,
+    description: `No account necessary! Heya! is built on top of the nostr protocol which uses a private key for your “password”`,
   },
   {
     icon: EyeOff,
     title: "Private",
-    description: `You can zap anonymously to keep your identity private. Goalz never touches your traditional payment methods so there’s no KYC.`,
+    description: `You can zap anonymously to keep your identity private. Heya! never touches your traditional payment methods so there’s no KYC.`,
   },
   {
     icon: HeartHand,
     title: "Any Cause",
-    description: `Goalz empowers individuals to fund any cause close to their hearts, whether it's supporting a creative project, helping a charitable organization, or fueling personal ambitions.`,
+    description: `Heya! empowers individuals to fund any cause close to their hearts, whether it's supporting a creative project, helping a charitable organization, or fueling personal ambitions.`,
   },
   {
     icon: Percent,
@@ -41,7 +41,7 @@ const features = [
   {
     icon: Target,
     title: "Any Goal",
-    description: `Goalz doesn’t care what you raise for. As long as your goals abides by our terms and conditions, we will display them.`,
+    description: `Heya! doesn’t care what you raise for. As long as your goals abides by our terms and conditions, we will display them.`,
   },
   {
     icon: ZapFast,

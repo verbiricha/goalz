@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   usePrefersReducedMotion,
   useBreakpointValue,
@@ -11,6 +11,8 @@ import { motion } from "framer-motion";
 import { GoalBubble } from "@goalz/components/Goal";
 
 const MotionBox = motion(Box);
+
+const MAX_EVENTS = 12;
 
 function tendToZeroOnLowerHalf(value: number) {
   const mapped = value < 0 ? 0 : value > 360 ? 360 : value;
@@ -43,12 +45,15 @@ export default function OrbitingGoals({ events }: OrbitingGoalsProps) {
     },
   );
   const [orbitingElements, setOrbitingElements] = useState<OrbitingItem[]>([]);
+  const eventsToShow = useMemo(() => {
+    return events.slice(0, MAX_EVENTS);
+  }, [events]);
 
   useEffect(() => {
-    const initialElements = events.map((event, index) => ({
+    const initialElements = eventsToShow.map((event, index) => ({
       id: index,
       event,
-      angle: (index / events.length) * 360,
+      angle: (index / eventsToShow.length) * 360,
     }));
 
     setOrbitingElements(initialElements);

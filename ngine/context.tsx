@@ -24,10 +24,7 @@ interface NgineContext {
   ndk: NDK;
   nip07Login: () => Promise<NDKUser | undefined>;
   nsecLogin: (nsec: string) => Promise<NDKUser>;
-  sign: (
-    ev: Omit<NostrEvent, "pubkey">,
-    signer?: NDKSigner,
-  ) => Promise<NDKEvent | undefined>;
+  sign: (ev: NostrEvent, signer?: NDKSigner) => Promise<NDKEvent | undefined>;
 }
 
 const NgineContext = createContext<NgineContext>({
@@ -126,7 +123,7 @@ export const NgineProvider = ({
     }
   }, [session]);
 
-  async function sign(ev: Omit<NostrEvent, "pubkey">, signer?: NDKSigner) {
+  async function sign(ev: NostrEvent, signer?: NDKSigner) {
     if (session?.pubkey) {
       const ndkEvent = new NDKEvent(ndk, { ...ev, pubkey: session.pubkey });
       await ndkEvent.sign(signer);

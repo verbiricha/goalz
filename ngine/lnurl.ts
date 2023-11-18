@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { NostrEvent } from "@nostr-dev-kit/ndk";
 import { useQuery, useQueries } from "@tanstack/react-query";
 import { bech32 } from "bech32";
@@ -26,6 +27,40 @@ export function useLnurl(profile: NDKUserProfile | null) {
     refetchOnMount: false,
   });
   return query;
+}
+
+export function useLnurlVerify(lnurlVerifyUrl?: string) {
+  const [isPaid, setIsPaid] = useState(false);
+
+  useEffect(() => {
+    let pollingInterval: number | undefined;
+
+    const pollLnurlPayment = async () => {
+      try {
+        if (lnurlVerifyUrl) {
+          const response = await fetch(lnurlVerifyUrl);
+          const data = await response.json();
+
+          if (data.settled) {
+            setIsPaid(true);
+            clearInterval(pollingInterval);
+          }
+        }
+      } catch (error) {
+        console.error("Error polling LNURL:", error);
+      }
+    };
+
+    if (lnurlVerifyUrl) {
+      pollingInterval = setInterval(pollLnurlPayment, 1000);
+
+      return () => clearInterval(pollingInterval);
+    }
+
+    return () => {};
+  }, [lnurlVerifyUrl]);
+
+  return isPaid;
 }
 
 export function useLnurls(profiles: NDKUserProfile[]) {
