@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useAtomValue } from "jotai";
+import { useNavigate } from "react-router-dom";
 import { nip19, nip05 } from "nostr-tools";
 import {
+  useToast,
   Flex,
   Stack,
   HStack,
@@ -22,6 +24,7 @@ import {
 import Avatar from "@ngine/components/Avatar";
 import useSession from "@ngine/hooks/useSession";
 import useRelays from "@ngine/hooks/useRelays";
+import { useSign } from "@ngine/context";
 import ImageUploader from "@ngine/components/ImageUploader";
 
 import { GoalPreview, Shares } from "@goalz/components/Goal";
@@ -37,8 +40,11 @@ function getMinimumDate() {
 }
 
 function CreateGoal() {
+  const toast = useToast();
   const [session] = useSession();
   const [relays] = useRelays();
+  const sign = useSign();
+  const navigate = useNavigate();
   const fiatCurrency = useAtomValue(fiatCurrencyAtom);
   const rates = useAtomValue(ratesAtom);
   // Goal settings
@@ -80,9 +86,7 @@ function CreateGoal() {
       return;
     }
     try {
-      console.log("GOT", maybeNpub);
       if (maybeNpub.includes("@")) {
-        console.log("QUERY", maybeNpub);
         const profile = await nip05.queryProfile(maybeNpub);
         if (profile) {
           setNpub(profile.pubkey);
@@ -132,7 +136,7 @@ function CreateGoal() {
       created_at: Math.floor(Date.now() / 1000),
       tags: [
         ["relays", ...relays],
-        ["amount", amount],
+        ["amount", String(Number(amount) * 1000)],
       ],
       content: name,
     };
@@ -145,7 +149,8 @@ function CreateGoal() {
       ev.tags.push(["image", image]);
     }
     if (closedAt) {
-      ev.tags.push(["closed_at", String(closedAt)]);
+      const timestamp = Math.floor(new Date(closedAt).getTime() / 1000);
+      ev.tags.push(["closed_at", String(timestamp)]);
     }
     if (url) {
       ev.tags.push(["r", url]);
@@ -155,9 +160,34 @@ function CreateGoal() {
     }
     try {
       setIsPublishing(true);
-      // todo: publish
+      const signed = await sign(ev);
+      if (signed) {
+        toast({
+          description: "🎉 Goal created",
+          status: "success",
+          position: "top-right",
+          isClosable: true,
+          duration: 1500,
+        });
+        const nevent = nip19.neventEncode({
+          id: signed.tagId(),
+          relays,
+          author: session!.pubkey,
+        });
+        await signed.publish();
+        navigate(`/e/${nevent}`);
+      } else {
+        throw new Error("Couldn't sign goal event");
+      }
     } catch (error) {
-      console.error(error);
+      toast({
+        title: "Something went wrong",
+        description: (error as Error)?.message || "",
+        status: "error",
+        position: "top-right",
+        isClosable: true,
+        duration: 1500,
+      });
     } finally {
       setIsPublishing(false);
     }

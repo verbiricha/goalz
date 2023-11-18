@@ -160,6 +160,7 @@ function SupportButton(props: ButtonProps) {
         await window.webln.enable();
         // @ts-ignore
         await window.webln.sendPayment(pr);
+        // todo: toast
         closeModal();
       } catch (error) {
         console.error(error);
