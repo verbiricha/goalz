@@ -29,15 +29,10 @@ import {
   Radio,
 } from "@chakra-ui/react";
 import { generatePrivateKey } from "nostr-tools";
-import {
-  NDKEvent,
-  NDKKind,
-  NostrEvent,
-  NDKPrivateKeySigner,
-} from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import("@getalby/bitcoin-connect-react"); // enable NWC
 
-import { getZapSplits, ZapSplit } from "@ngine/nostr/nip57";
+import { makeZapRequest, getZapSplits, ZapSplit } from "@ngine/nostr/nip57";
 import User from "@ngine/components/User";
 import QrCode from "@ngine/components/QrCode";
 import InputCopy from "@ngine/components/InputCopy";
@@ -46,7 +41,7 @@ import useSession from "@ngine/hooks/useSession";
 import useProfile from "@ngine/nostr/useProfile";
 import useProfiles from "@ngine/nostr/useProfiles";
 import { useLnurl, useLnurls, loadInvoice } from "@ngine/lnurl";
-import { useNDK } from "@ngine/context";
+import { useSign } from "@ngine/context";
 
 // todo: make part of ngine
 export function formatShortNumber(n: number) {
@@ -117,7 +112,6 @@ function SatSlider({ minSendable, maxSendable, onSelect }: SatSliderProps) {
     1_000_000,
     2_000_000,
   ];
-  console.log({ min, max });
 
   function selectAmount(a: number) {
     setAmount(a);
@@ -176,8 +170,8 @@ interface ZapModalProps {
 }
 
 function SingleZapModal({ pubkey, event, isOpen, onClose }: ZapModalProps) {
+  const sign = useSign();
   const toast = useToast();
-  const ndk = useNDK();
   const [relays] = useRelays();
   const profile = useProfile(pubkey);
   const [amount, setAmount] = useState(defaultZapAmount);
@@ -203,26 +197,23 @@ function SingleZapModal({ pubkey, event, isOpen, onClose }: ZapModalProps) {
 
   async function zapRequest() {
     try {
-      const msats = amount * 1000;
-      const zr = {
-        kind: NDKKind.ZapRequest,
-        created_at: Math.round(Date.now() / 1000),
-        content: comment,
-        tags: [
-          ["p", pubkey],
-          ...[event ? event.tagReference() : []],
-          ["amount", String(msats)],
-          ["relays", ...relays],
-        ],
-      } as NostrEvent;
-      const signed = new NDKEvent(ndk, zr);
+      const zr = makeZapRequest({
+        pubkey,
+        event,
+        comment,
+        amount,
+        relays,
+      });
+      let signed;
       if (isAnon) {
         const pk = generatePrivateKey();
-        await signed.sign(new NDKPrivateKeySigner(pk));
+        signed = await sign(zr, new NDKPrivateKeySigner(pk));
       } else {
-        await signed.sign();
+        signed = await sign(zr);
       }
-      return signed.toNostrEvent();
+      if (signed) {
+        return signed.toNostrEvent();
+      }
     } catch (error) {
       console.error(error);
     }
@@ -386,8 +377,8 @@ function MultiZapModal({
   isOpen,
   onClose,
 }: MultiZapModalProps) {
+  const sign = useSign();
   const toast = useToast();
-  const ndk = useNDK();
   const [relays] = useRelays();
   const pubkeys = useMemo(() => {
     return zapSplits.map((z) => z.pubkey);
@@ -420,26 +411,23 @@ function MultiZapModal({
 
   async function zapRequest(pubkey: string, amount: number) {
     try {
-      const msats = amount * 1000;
-      const zr = {
-        kind: NDKKind.ZapRequest,
-        created_at: Math.round(Date.now() / 1000),
-        content: comment,
-        tags: [
-          ["p", pubkey],
-          ...[event ? event.tagReference() : []],
-          ["amount", String(msats)],
-          ["relays", ...relays],
-        ],
-      } as NostrEvent;
-      const signed = new NDKEvent(ndk, zr);
+      const zr = makeZapRequest({
+        pubkey,
+        amount,
+        relays,
+        event,
+        comment,
+      });
+      let signed;
       if (isAnon) {
         const pk = generatePrivateKey();
-        await signed.sign(new NDKPrivateKeySigner(pk));
+        signed = await sign(zr, new NDKPrivateKeySigner(pk));
       } else {
-        await signed.sign();
+        signed = await sign(zr);
       }
-      return signed.toNostrEvent();
+      if (signed) {
+        return signed.toNostrEvent();
+      }
     } catch (error) {
       console.error(error);
     }

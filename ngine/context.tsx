@@ -9,9 +9,12 @@ import NDK, {
   NDKNip07Signer,
   NDKPrivateKeySigner,
   NDKUser,
+  NostrEvent,
+  NDKEvent,
+  NDKSigner,
 } from "@nostr-dev-kit/ndk";
 
-import { followsAtom } from "@ngine/state";
+import { relaysAtom, followsAtom } from "@ngine/state";
 import { DEFAULT_RELAYS } from "@ngine/const";
 import useSession from "@ngine/hooks/useSession";
 
@@ -21,6 +24,10 @@ interface NgineContext {
   ndk: NDK;
   nip07Login: () => Promise<NDKUser | undefined>;
   nsecLogin: (nsec: string) => Promise<NDKUser>;
+  sign: (
+    ev: Omit<NostrEvent, "pubkey">,
+    signer?: NDKSigner,
+  ) => Promise<NDKEvent | undefined>;
 }
 
 const NgineContext = createContext<NgineContext>({
@@ -29,6 +36,9 @@ const NgineContext = createContext<NgineContext>({
     return Promise.reject();
   },
   nsecLogin: () => {
+    return Promise.reject();
+  },
+  sign: () => {
     return Promise.reject();
   },
 });
@@ -49,6 +59,7 @@ export const NgineProvider = ({
   locale = "en-US",
 }: NgineProviderProps) => {
   const [session, setSession] = useSession();
+  const [, setRelays] = useAtom(relaysAtom);
   const [contacts, setContacts] = useAtom(followsAtom);
 
   async function nip07Login() {
@@ -91,6 +102,17 @@ export const NgineProvider = ({
             setContacts(c);
           }
         });
+      ndk
+        .fetchEvent({
+          kinds: [NDKKind.RelayList],
+          authors: [session.pubkey],
+        })
+        .then((r) => {
+          if (r) {
+            const relays = r.tags.filter((t) => t[0] === "r").map((t) => t[1]);
+            setRelays(relays);
+          }
+        });
     }
   }, [session]);
 
@@ -104,8 +126,18 @@ export const NgineProvider = ({
     }
   }, [session]);
 
+  async function sign(ev: Omit<NostrEvent, "pubkey">, signer?: NDKSigner) {
+    if (session?.pubkey) {
+      const ndkEvent = new NDKEvent(ndk, { ...ev, pubkey: session.pubkey });
+      await ndkEvent.sign(signer);
+      return ndkEvent;
+    } else if (!signer) {
+      console.error("No signer available");
+    }
+  }
+
   return (
-    <NgineContext.Provider value={{ ndk, nip07Login, nsecLogin }}>
+    <NgineContext.Provider value={{ ndk, nip07Login, nsecLogin, sign }}>
       <IntlProvider locale={locale}>
         <ChakraProvider theme={theme}>
           <QueryClientProvider client={queryClient}>
@@ -131,6 +163,14 @@ export const useNsecLogin = () => {
     throw new Error("Ngine context not found");
   }
   return context.nsecLogin;
+};
+
+export const useSign = () => {
+  const context = useContext(NgineContext);
+  if (context === undefined) {
+    throw new Error("Ngine context not found");
+  }
+  return context.sign;
 };
 
 export const useNDK = () => {

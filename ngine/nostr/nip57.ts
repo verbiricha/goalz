@@ -1,5 +1,35 @@
 import { decode } from "light-bolt11-decoder";
+import { NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKEvent, NostrEvent } from "@nostr-dev-kit/ndk";
+
+import { unixNow } from "@ngine/time";
+
+export function makeZapRequest({
+  pubkey,
+  amount,
+  relays,
+  event,
+  comment,
+}: {
+  pubkey: string;
+  amount: number;
+  relays: string[];
+  event?: NDKEvent;
+  comment?: string;
+}): Omit<NostrEvent, "pubkey"> {
+  const msats = amount * 1000;
+  return {
+    kind: NDKKind.ZapRequest,
+    created_at: unixNow(),
+    content: comment || "",
+    tags: [
+      ["p", pubkey],
+      ...[event ? event.tagReference() : []],
+      ["amount", String(msats)],
+      ["relays", ...relays],
+    ],
+  };
+}
 
 export function getZapRequest(zap: NDKEvent): NostrEvent | undefined {
   let zapRequest = zap.tagValue("description");

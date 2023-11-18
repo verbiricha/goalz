@@ -153,9 +153,9 @@ function CreateGoal() {
     for (const tag of zapSplits) {
       ev.tags.push(tag);
     }
-    console.log("EV", ev);
     try {
       setIsPublishing(true);
+      // todo: publish
     } catch (error) {
       console.error(error);
     } finally {
