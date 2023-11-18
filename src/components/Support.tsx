@@ -202,8 +202,8 @@ function SupportButton(props: ButtonProps) {
           relays,
         });
         const zr = await sign(ev);
-        const zap = zr ? zr.rawEvent() : undefined;
-        const inv = await loadInvoice(lnurl, amount, content, zap);
+        const zap = zr ? await zr.toNostrEvent() : undefined;
+        const inv = await loadInvoice(lnurl, amountAsSats, content, zap);
         if (inv?.pr) {
           await payInvoice(inv.pr, inv.verify);
         }
