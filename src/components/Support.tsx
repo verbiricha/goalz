@@ -341,17 +341,21 @@ export default function Support() {
           ))}
         </Flex>
       )}
-      <Text textAlign="center">
-        Heya! is possible thanks to hard working open source contributors and
-        their supporters.
-      </Text>
-      <Text>Becoming a supporters comes with perks:</Text>
-      <UnorderedList>
-        <ListItem>
-          Your profile will be listed on the supporters section
-        </ListItem>
-        <ListItem>Your latest goal will be featured on the home page</ListItem>
-      </UnorderedList>
+      <Stack align="center">
+        <Text textAlign="center">
+          Heya! is possible thanks to hard working open source contributors and
+          their supporters.
+        </Text>
+        <Text textAlign="center">Becoming a supporters comes with perks:</Text>
+        <UnorderedList>
+          <ListItem>
+            Your profile will be listed on the supporters section
+          </ListItem>
+          <ListItem>
+            Your latest goal will be featured on the home page
+          </ListItem>
+        </UnorderedList>
+      </Stack>
       <Stack align="center">
         <SupportButton size="md" isDisabled={!isLoggedIn} />
         {!isLoggedIn && (
