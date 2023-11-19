@@ -1,11 +1,10 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { FormattedNumber } from "react-intl";
 import {
   useDisclosure,
   HStack,
   Stack,
   Flex,
-  Box,
   Heading,
   Text,
   Button,
@@ -28,8 +27,9 @@ import {
   NumberDecrementStepper,
   Textarea,
   Icon,
+  UnorderedList,
+  ListItem,
 } from "@chakra-ui/react";
-import { CheckIcon } from "@chakra-ui/icons";
 import { useAtomValue } from "jotai";
 
 import { SUPPORT, HEYA_PUBKEY } from "@goalz/const";
@@ -38,16 +38,15 @@ import { ratesAtom } from "@goalz/state";
 import useSupporters from "@goalz/hooks/useSupporters";
 
 import Avatar from "@ngine/components/Avatar";
-import InputCopy from "@ngine/components/InputCopy";
+import LnInvoice from "@ngine/components/LnInvoice";
 import { HeartHand } from "@ngine/icons";
 import { unixNow } from "@ngine/time";
 import useProfile from "@ngine/nostr/useProfile";
 import useSession from "@ngine/hooks/useSession";
-import { useLnurl, useLnurlVerify, loadInvoice } from "@ngine/lnurl";
+import { useLnurl, loadInvoice } from "@ngine/lnurl";
 import { makeZapRequest } from "@ngine/nostr/nip57";
 import { useSign } from "@ngine/context";
 import { relaysAtom } from "@ngine/state";
-import QrCode from "@ngine/components/QrCode";
 
 enum Frequency {
   daily = "daily",
@@ -73,47 +72,6 @@ function frequencyToNoun(f: Frequency) {
   } else {
     return "year";
   }
-}
-
-interface LnInvoiceProps {
-  verifyUrl?: string;
-  invoice: string;
-  onInvoicePaid(): void;
-}
-
-function LnInvoice({ verifyUrl, invoice, onInvoicePaid }: LnInvoiceProps) {
-  const isPaid = useLnurlVerify(verifyUrl);
-  useEffect(() => {
-    if (isPaid) {
-      onInvoicePaid();
-    }
-  }, [isPaid]);
-  return (
-    <Stack align="center">
-      {isPaid ? (
-        <Stack width={256} height={256} align="center" justify="center">
-          <Icon as={CheckIcon} color="green" boxSize={20} />
-          <Text fontSize="xl">Paid!</Text>
-        </Stack>
-      ) : (
-        <Box cursor="pointer">
-          <QrCode data={invoice} link={`lightning:${invoice}`} />
-        </Box>
-      )}
-      {!isPaid && (
-        <>
-          <InputCopy text={invoice} showToast />
-          <Button
-            variant="solid"
-            colorScheme="orange"
-            onClick={() => window.open(`lightning:${invoice}`)}
-          >
-            Open in wallet
-          </Button>
-        </>
-      )}
-    </Stack>
-  );
 }
 
 function SupportButton(props: ButtonProps) {
@@ -369,11 +327,17 @@ export default function Support() {
       )}
       <Text textAlign="center">
         Heya! is possible thanks to hard working open source contributors and
-        their supporters. Did you find it useful? Consider supporting the
-        project by setting up a subscription.
+        their supporters.
       </Text>
+      <Text>Becoming a supporters comes with perks:</Text>
+      <UnorderedList>
+        <ListItem>
+          Your profile will be listed on the supporters section
+        </ListItem>
+        <ListItem>Your latest goal will be featured on the home page</ListItem>
+      </UnorderedList>
       <Stack align="center">
-        <SupportButton isDisabled={!isLoggedIn} />
+        <SupportButton size="md" isDisabled={!isLoggedIn} />
         {!isLoggedIn && (
           <Text fontSize="xs" color="gray.500">
             Log in to subscribe

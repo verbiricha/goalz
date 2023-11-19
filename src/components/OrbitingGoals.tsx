@@ -45,6 +45,7 @@ export default function OrbitingGoals({ events }: OrbitingGoalsProps) {
     },
   );
   const [orbitingElements, setOrbitingElements] = useState<OrbitingItem[]>([]);
+  // todo: random selection? can use Fisher-Yates
   const eventsToShow = useMemo(() => {
     return events.slice(0, MAX_EVENTS);
   }, [events]);
