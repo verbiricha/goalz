@@ -25,7 +25,6 @@ export default function Home() {
     {
       kinds: [GOAL],
       ids: [
-        "ebe64e839a6f8391bdfd0d7d8950588f296e8e00eb271cda36e3d1af610e9732",
         "bd3b899997cd4ce115532a84eabe598bb7547cab8f44b06812b2306d64761096",
         "9b734bc67402c034857ec3f2ecd8e74d61d38f46505067c5e53986cf70a0c4f6",
         "060f4f06455ee0a87db48f7d5f23b532bcc133cea7dd3bc9f2a20226f1bf2705",

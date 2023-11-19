@@ -71,7 +71,7 @@ function useGoalInfo(event: NDKEvent): GoalInfo {
   }, [event.id]);
   const image = useMemo(() => {
     return event.tagValue("image") || profile?.image;
-  }, [event.id, profile]);
+  }, [event.id, profile?.image]);
   const relays = useMemo(() => {
     const rs = event.getMatchingTags("relays");
     if (rs.length === 0) return DEFAULT_RELAYS;
