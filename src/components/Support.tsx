@@ -346,7 +346,7 @@ export default function Support() {
           Heya! is possible thanks to hard working open source contributors and
           their supporters.
         </Text>
-        <Text textAlign="center">Becoming a supporters comes with perks:</Text>
+        <Text textAlign="center">Becoming a supporter comes with perks:</Text>
         <UnorderedList>
           <ListItem>
             Your profile will be listed on the supporters section
