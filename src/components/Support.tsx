@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { FormattedNumber } from "react-intl";
 import {
+  useToast,
   useDisclosure,
   HStack,
   Stack,
@@ -75,6 +76,7 @@ function frequencyToNoun(f: Frequency) {
 }
 
 function SupportButton(props: ButtonProps) {
+  const toast = useToast();
   const sign = useSign();
   const { onOpen, onClose, isOpen } = useDisclosure();
   const profile = useProfile(HEYA_PUBKEY);
@@ -118,7 +120,13 @@ function SupportButton(props: ButtonProps) {
         await window.webln.enable();
         // @ts-ignore
         await window.webln.sendPayment(pr);
-        // todo: toast
+        toast({
+          description: "🙏 Thanks for supporting the project",
+          status: "success",
+          position: "top-right",
+          isClosable: true,
+          duration: 1500,
+        });
         closeModal();
       } catch (error) {
         console.error(error);
@@ -166,10 +174,18 @@ function SupportButton(props: ButtonProps) {
           await payInvoice(inv.pr, inv.verify);
         }
       } else {
-        console.error("Couldn't sign event");
+        throw new Error("Couldn't sign event");
       }
     } catch (error) {
       console.error(error);
+      toast({
+        title: "Something went wrong",
+        description: (error as Error)?.message,
+        status: "error",
+        position: "top-right",
+        isClosable: true,
+        duration: 1500,
+      });
     } finally {
       setIsBusy(false);
     }
