@@ -624,6 +624,7 @@ export function GoalBubble({ event }: { event: NDKEvent }) {
         width={`${size}px`}
         height={`${size}px`}
         src={image}
+        fit="contain"
         borderRadius="50%"
         border="2px solid"
         borderColor="chakra-body-bg"
