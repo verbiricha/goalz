@@ -18,6 +18,10 @@ const theme = extendTheme({
     heading: `'Figtree', sans-serif`,
     body: `'Figtree', sans-serif`,
   },
+  config: {
+    initialColorMode: "dark",
+    useSystemColorMode: false,
+  },
   colors: {
     brand: {
       50: "#FAF6FF",

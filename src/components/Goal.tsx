@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { FormattedDate } from "react-intl";
+import { useNavigate } from "react-router-dom";
 import {
   Flex,
   Box,
@@ -21,6 +22,7 @@ import {
 import type { CardProps } from "@chakra-ui/react";
 import { NDKKind, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
 import type { NDKEvent } from "@nostr-dev-kit/ndk";
+import { useAtomValue } from "jotai";
 
 import { Image as ImageIcon } from "@ngine/icons";
 import User from "@ngine/components/User";
@@ -38,8 +40,15 @@ import {
 import { DEFAULT_RELAYS } from "@ngine/const";
 import ZapButton from "@ngine/components/ZapButton";
 
+import { currencyAtom, ratesAtom } from "@goalz/state";
 import ExternalLink from "@goalz/components/ExternalLink";
 import { formatSatAmount, formatRelativeTime } from "@goalz/format";
+
+function useCurrencySettings() {
+  const currency = useAtomValue(currencyAtom);
+  const rates = useAtomValue(ratesAtom);
+  return { currency, rates };
+}
 
 interface GoalInfo {
   link: string;
@@ -104,6 +113,7 @@ interface RaisedProps {
 }
 
 export function Raised({ latest, goal, raised }: RaisedProps) {
+  const { currency, rates } = useCurrencySettings();
   const progress = useMemo(
     () => (goal > 0 ? (raised / goal) * 100 : 0),
     [raised, goal],
@@ -119,9 +129,11 @@ export function Raised({ latest, goal, raised }: RaisedProps) {
       <Progress value={progress} colorScheme="green" size="sm" />
       <Flex justify="space-between" gap={2} wrap="wrap">
         <HStack spacing={1}>
-          <Text fontWeight={600}>{formatSatAmount(raised)}</Text>
+          <Text fontWeight={600}>
+            {formatSatAmount(raised, currency, rates)}
+          </Text>
           <Text color="gray.500">/</Text>
-          <Text fontWeight={600}>{formatSatAmount(goal)}</Text>
+          <Text fontWeight={600}>{formatSatAmount(goal, currency, rates)}</Text>
         </HStack>
         <Text fontWeight={600}>
           {isAchieved ? "100" : progress === 0 ? "0" : progress.toFixed(2)}%
@@ -138,6 +150,7 @@ interface BeneficiariesProps {
 }
 
 export function Beneficiaries({ event, zaps }: BeneficiariesProps) {
+  const { currency, rates } = useCurrencySettings();
   const zapSplits = useMemo(() => getZapSplits(event), [event]);
   return zapSplits.length > 0 ? (
     <Stack gap={2}>
@@ -152,7 +165,7 @@ export function Beneficiaries({ event, zaps }: BeneficiariesProps) {
             <HStack gap={1}>
               <Text fontSize="xs">%{percentage.toFixed(0)}</Text>
               <Text fontSize="xs">
-                ({got > 0 ? formatSatAmount(got) : "-"})
+                ({got > 0 ? formatSatAmount(got, currency, rates) : "-"})
               </Text>
             </HStack>
           </Flex>
@@ -178,6 +191,7 @@ export function GoalCard({ event, ...rest }: GoalCardProps) {
     goal,
     href,
   } = useGoalInfo(event);
+  const navigate = useNavigate();
   // Zaps
   const { events: zaps } = useEvents(
     {
@@ -213,42 +227,40 @@ export function GoalCard({ event, ...rest }: GoalCardProps) {
   }, [zapRequests]);
   return (
     <Card variant="goal" w={{ base: "xs", md: "sm" }} {...rest}>
-      <Link href={link}>
-        <Box position="relative">
-          {image && (
-            <>
-              <Image
-                maxH="236px"
-                w="100%"
-                objectFit="cover"
-                borderTopLeftRadius="md"
-                borderTopRightRadius="md"
-                src={image}
-                alt={title}
-              />
-            </>
-          )}
-          {closedAt && (
-            <Tag
-              variant="gray"
-              sx={{ position: "absolute", top: "20px", right: "16px" }}
-            >
-              {isExpired ? "Expired" : "Expires"}{" "}
-              <FormattedDate
-                value={closedAt}
-                year="numeric"
-                month="numeric"
-                day="numeric"
-              />
-            </Tag>
-          )}
-        </Box>
-      </Link>
+      <Box cursor="pointer" position="relative" onClick={() => navigate(link)}>
+        {image && (
+          <>
+            <Image
+              maxH="236px"
+              w="100%"
+              objectFit="cover"
+              borderTopLeftRadius="md"
+              borderTopRightRadius="md"
+              src={image}
+              alt={title}
+            />
+          </>
+        )}
+        {closedAt && (
+          <Tag
+            variant="gray"
+            sx={{ position: "absolute", top: "20px", right: "16px" }}
+          >
+            {isExpired ? "Expired" : "Expires"}{" "}
+            <FormattedDate
+              value={closedAt}
+              year="numeric"
+              month="numeric"
+              day="numeric"
+            />
+          </Tag>
+        )}
+      </Box>
       <CardBody>
         <Stack gap={2}>
-          <Link href={link} color="chakra-body-text">
-            <Heading size="md">{title}</Heading>
-          </Link>
+          <Heading cursor="pointer" size="md" onClick={() => navigate(link)}>
+            {title}
+          </Heading>
           <User pubkey={event.pubkey} />
           {description && <Text fontSize="sm">{description}</Text>}
           {href && <ExternalLink href={href} />}
@@ -275,6 +287,7 @@ interface GoalDetailProps extends CardProps {
 }
 
 export function GoalDetail({ event }: GoalDetailProps) {
+  const { currency, rates } = useCurrencySettings();
   const {
     link,
     title,
@@ -286,6 +299,7 @@ export function GoalDetail({ event }: GoalDetailProps) {
     goal,
     href,
   } = useGoalInfo(event);
+  const navigate = useNavigate();
   // Zaps
   const { events: zaps } = useEvents(
     {
@@ -360,9 +374,9 @@ export function GoalDetail({ event }: GoalDetailProps) {
         )}
       </Link>
       <Stack gap={2}>
-        <Link href={link} color="chakra-body-text">
-          <Heading size="md">{title}</Heading>
-        </Link>
+        <Heading cursor="pointer" size="md" onClick={() => navigate(link)}>
+          {title}
+        </Heading>
         <User pubkey={event.pubkey} />
         {description && <Text fontSize="sm">{description}</Text>}
         {href && <ExternalLink href={href} />}
@@ -386,6 +400,8 @@ export function GoalDetail({ event }: GoalDetailProps) {
                     <Text fontWeight={600} fontSize="lg">
                       {formatSatAmount(
                         zrs.reduce((acc, zr) => acc + zr.amount, 0),
+                        currency,
+                        rates,
                       )}
                     </Text>
                   </Flex>
@@ -421,7 +437,7 @@ export function GoalDetail({ event }: GoalDetailProps) {
                       pubkey={zr.pubkey}
                     />
                     <Text fontWeight={600} fontSize="lg">
-                      {formatSatAmount(zr.amount)}
+                      {formatSatAmount(zr.amount, currency, rates)}
                     </Text>
                   </Flex>
                   {zr.content.length > 0 && (

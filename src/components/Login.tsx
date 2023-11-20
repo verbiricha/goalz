@@ -13,7 +13,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  //MenuGroup,
+  MenuGroup,
   MenuDivider,
   Icon,
 } from "@chakra-ui/react";
@@ -25,6 +25,7 @@ import { User, Target, Close } from "@ngine/icons";
 
 import LoginDialog from "@goalz/components/LoginDialog";
 //import CurrencySwitch from "./CurrencySwitch";
+import ColorModeSwitch from "./ColorModeSwitch";
 
 interface UserMenuProps {
   pubkey: string;
@@ -60,14 +61,12 @@ function UserMenu({ pubkey }: UserMenuProps) {
           New goal
         </MenuItem>
         <MenuDivider />
-        {/*
-        <MenuGroup title="Currency">
+        <MenuGroup title="Settings">
           <MenuItem closeOnSelect={false}>
-            <CurrencySwitch />
+            <ColorModeSwitch />
           </MenuItem>
         </MenuGroup>
         <MenuDivider />
-	*/}
         <MenuItem icon={<Icon as={Close} />} onClick={logOut}>
           Log Out
         </MenuItem>

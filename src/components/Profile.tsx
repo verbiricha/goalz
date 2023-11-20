@@ -202,7 +202,7 @@ export default function Profile({ pubkey }: ProfileProps) {
     <Stack w="100%" gap={3}>
       <Flex align="center" justify="space-between">
         <User pubkey={pubkey} size="lg" fontSize="3xl" fontWeight={700} />
-        <FollowButton pubkey={pubkey} />
+        <FollowButton variant="outline" pubkey={pubkey} />
       </Flex>
       {profile?.about && <Text>{profile.about}</Text>}
       {profile?.lud16 && (

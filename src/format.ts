@@ -1,4 +1,6 @@
-export function formatSatAmount(n: number) {
+import type { Currency, Rates } from "./money";
+
+function formatSats(n: number) {
   const intl = new Intl.NumberFormat("en", {
     minimumFractionDigits: 0,
     maximumFractionDigits: n < 1e8 ? 2 : 8,
@@ -15,6 +17,21 @@ export function formatSatAmount(n: number) {
   } else {
     return `${intl.format(n / 1e8)}BTC`;
   }
+}
+
+export function formatSatAmount(n: number, currency: Currency, rates?: Rates) {
+  const hasFiatFormatting = currency === "USD" && rates;
+  if (hasFiatFormatting) {
+    const intl = new Intl.NumberFormat("en", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 2,
+    });
+    const amount = (n / 1e8) * rates.ask;
+    return intl.format(amount);
+  }
+
+  return formatSats(n);
 }
 
 // todo:

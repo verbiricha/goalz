@@ -1,30 +1,33 @@
 import { useAtom, useAtomValue } from "jotai";
-import { HStack, Switch, Text } from "@chakra-ui/react";
+import { Switch } from "@chakra-ui/react";
 
-import { currencyAtom, fiatCurrencyAtom } from "@goalz/state";
+import useRates from "@goalz/hooks/useRates";
+import { rateSymbolAtom, currencyAtom } from "@goalz/state";
 
 export default function CurrencySwitch() {
-  const fiatCurrency = useAtomValue(fiatCurrencyAtom);
+  const rateSymbol = useAtomValue(rateSymbolAtom);
+  const currentRates = useRates(rateSymbol);
   const [currency, setCurrency] = useAtom(currencyAtom);
-  const isBTC = currency === "BTC";
+  const isUSD = currency === "USD";
 
+  // todo: rate symbol atom when supporting EUR
   function changeCurrency() {
-    if (isBTC) {
-      setCurrency(fiatCurrency);
-    } else {
+    if (isUSD) {
       setCurrency("BTC");
+    } else {
+      setCurrency("USD");
     }
   }
 
   return (
-    <HStack>
-      <Text>{fiatCurrency}</Text>
-      <Switch
-        colorScheme={isBTC ? "orange" : "green"}
-        onChange={changeCurrency}
-        isChecked={isBTC}
-      />
-      <Text>BTC</Text>
-    </HStack>
+    <Switch
+      colorScheme="brand"
+      isDisabled={!currentRates}
+      onChange={changeCurrency}
+      isChecked={isUSD}
+      size="sm"
+    >
+      USD amounts
+    </Switch>
   );
 }

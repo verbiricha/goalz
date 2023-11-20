@@ -2,7 +2,7 @@ import { useEffect, createContext, useContext } from "react";
 import { IntlProvider } from "react-intl";
 import { RouterProvider } from "react-router-dom";
 import { useAtom } from "jotai";
-import { Theme, ChakraProvider } from "@chakra-ui/react";
+import { Theme, ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import NDK, {
   NDKKind,
@@ -42,7 +42,7 @@ const NgineContext = createContext<NgineContext>({
 
 interface NgineProviderProps {
   ndk: NDK;
-  theme?: Theme;
+  theme: Theme;
   router: any; // todo: type this
   locale?: string;
 }
@@ -138,7 +138,12 @@ export const NgineProvider = ({
       <IntlProvider locale={locale}>
         <ChakraProvider theme={theme}>
           <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
+            <>
+              <ColorModeScript
+                initialColorMode={theme.config.initialColorMode}
+              />
+              <RouterProvider router={router} />
+            </>
           </QueryClientProvider>
         </ChakraProvider>
       </IntlProvider>

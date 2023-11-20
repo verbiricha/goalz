@@ -8,9 +8,17 @@ import ZapModal from "@ngine/components/ZapModal";
 interface ZapButtonProps extends ButtonProps {
   pubkey: string;
   event?: NDKEvent;
+  currency?: string;
+  exchangeRate?: number;
 }
 
-export default function ZapButton({ pubkey, event, ...rest }: ZapButtonProps) {
+export default function ZapButton({
+  pubkey,
+  event,
+  currency,
+  exchangeRate,
+  ...rest
+}: ZapButtonProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
@@ -28,6 +36,8 @@ export default function ZapButton({ pubkey, event, ...rest }: ZapButtonProps) {
         event={event}
         isOpen={isOpen}
         onClose={onClose}
+        currency={currency}
+        exchangeRate={exchangeRate}
       />
     </>
   );

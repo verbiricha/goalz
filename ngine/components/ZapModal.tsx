@@ -167,6 +167,8 @@ interface ZapModalProps {
   event?: NDKEvent;
   isOpen: boolean;
   onClose(): void;
+  currency?: string;
+  exchangeRate?: number;
 }
 
 function SingleZapModal({ pubkey, event, isOpen, onClose }: ZapModalProps) {

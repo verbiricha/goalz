@@ -15,7 +15,17 @@ export default function ExternalLink({ href, ...rest }: LinkProps) {
   }, [href]);
   return text ? (
     <Link href={href} isExternal {...rest}>
-      <Icon as={LinkIcon} boxSize={3} color="gray.900" /> {text}
+      <Icon
+        as={LinkIcon}
+        boxSize={3}
+        sx={{
+          color: "gray.900",
+          _dark: {
+            color: "gray.100",
+          },
+        }}
+      />{" "}
+      {text}
     </Link>
   ) : null;
 }
