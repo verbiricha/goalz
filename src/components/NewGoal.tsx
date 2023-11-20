@@ -8,7 +8,6 @@ import {
   Stack,
   HStack,
   Box,
-  Heading,
   Text,
   Textarea,
   Button,
@@ -196,7 +195,6 @@ function CreateGoal() {
   return (
     <>
       <Stack>
-        <Heading>Create a zap goal</Heading>
         <Stack w="100%">
           <FormControl>
             <FormLabel>Cause or Goal name</FormLabel>
@@ -327,7 +325,6 @@ function CreateGoal() {
         </Stack>
       </Stack>
       <Stack gap={4}>
-        <Heading fontSize="xl">Preview</Heading>
         <GoalPreview
           title={name}
           goal={Number(amount)}
