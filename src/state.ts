@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-import type { RateSymbol, Rates, Currency, FiatCurrency } from "./money";
+import type { RateSymbol, Rates, Currency, FiatCurrency } from "@ngine/money";
 
 export const currencyAtom = atomWithStorage<Currency>("currency", "BTC");
 export const rateSymbolAtom = atom<RateSymbol>("BTCUSD");

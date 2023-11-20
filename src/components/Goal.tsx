@@ -39,10 +39,10 @@ import {
 } from "@ngine/nostr/nip57";
 import { DEFAULT_RELAYS } from "@ngine/const";
 import ZapButton from "@ngine/components/ZapButton";
+import { formatSatAmount, formatRelativeTime } from "@ngine/format";
 
 import { currencyAtom, ratesAtom } from "@goalz/state";
 import ExternalLink from "@goalz/components/ExternalLink";
-import { formatSatAmount, formatRelativeTime } from "@goalz/format";
 
 function useCurrencySettings() {
   const currency = useAtomValue(currencyAtom);
@@ -192,6 +192,7 @@ export function GoalCard({ event, ...rest }: GoalCardProps) {
     href,
   } = useGoalInfo(event);
   const navigate = useNavigate();
+  const { currency, rates } = useCurrencySettings();
   // Zaps
   const { events: zaps } = useEvents(
     {
@@ -275,7 +276,12 @@ export function GoalCard({ event, ...rest }: GoalCardProps) {
               <Avatar key={pubkey} pubkey={pubkey} />
             ))}
           </AvatarGroup>
-          <ZapButton pubkey={event.pubkey} event={event} />
+          <ZapButton
+            pubkey={event.pubkey}
+            event={event}
+            currency={currency}
+            rates={rates}
+          />
         </Flex>
       </CardFooter>
     </Card>
@@ -459,7 +465,12 @@ export function GoalDetail({ event }: GoalDetailProps) {
               );
             })}
       </Flex>
-      <ZapButton pubkey={event.pubkey} event={event} />
+      <ZapButton
+        pubkey={event.pubkey}
+        event={event}
+        currency={currency}
+        rates={rates}
+      />
     </Flex>
   );
 }

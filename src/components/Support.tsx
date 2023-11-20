@@ -36,7 +36,6 @@ import { CheckIcon } from "@chakra-ui/icons";
 import { useAtomValue } from "jotai";
 
 import { SUPPORT, HEYA_PUBKEY } from "@goalz/const";
-import type { Currency } from "@goalz/money";
 import { ratesAtom } from "@goalz/state";
 import useSupporters from "@goalz/hooks/useSupporters";
 
@@ -49,6 +48,7 @@ import useSession from "@ngine/hooks/useSession";
 import { useLnurl, loadInvoice } from "@ngine/lnurl";
 import { makeZapRequest } from "@ngine/nostr/nip57";
 import { useSign } from "@ngine/context";
+import type { Currency } from "@ngine/money";
 import { relaysAtom } from "@ngine/state";
 
 enum Frequency {
@@ -327,12 +327,6 @@ export default function Support() {
           Become a supporter
         </Heading>
         <Heading as="h3" color="gray.500" textAlign="center" fontSize="xl">
-          {/*
-          <FormattedMessage
-            defaultMessage="{count, plural, =0 {Be the first to support the project.}, =1 {One person supports this project.}, other {# people support this project.}}"
-            values={{ count: supporters.length }}
-          />
-	  */}
           {supportersText}
         </Heading>
       </Stack>
@@ -349,7 +343,8 @@ export default function Support() {
           their supporters.
         </Text>
         <Text textAlign="center">Becoming a supporter comes with perks:</Text>
-        <List>
+        {/* @ts-ignore */}
+        <List align="center">
           <ListItem>
             <ListIcon as={CheckIcon} color="green.500" />
             Your profile will be listed on the supporters section

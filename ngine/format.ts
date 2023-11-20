@@ -34,7 +34,6 @@ export function formatSatAmount(n: number, currency: Currency, rates?: Rates) {
   return formatSats(n);
 }
 
-// todo:
 export function formatRelativeTime(timestamp: number) {
   const now = Math.floor(Date.now() / 1000);
   const elapsed = now - timestamp;

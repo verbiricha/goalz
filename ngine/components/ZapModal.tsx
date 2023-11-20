@@ -28,6 +28,7 @@ import {
   RadioGroup,
   Radio,
 } from "@chakra-ui/react";
+import { FormattedNumber } from "react-intl";
 import { generatePrivateKey, getPublicKey } from "nostr-tools";
 import { NDKEvent, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import("@getalby/bitcoin-connect-react"); // enable NWC
@@ -42,26 +43,9 @@ import useProfile from "@ngine/nostr/useProfile";
 import useProfiles from "@ngine/nostr/useProfiles";
 import { useLnurl, useLnurls, loadInvoice } from "@ngine/lnurl";
 import { useSign } from "@ngine/context";
-
-// todo: make part of ngine
-export function formatShortNumber(n: number) {
-  const intl = new Intl.NumberFormat("en", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: n < 1e8 ? 2 : 8,
-  });
-
-  if (n === 1) {
-    return `1`;
-  } else if (n < 2e3) {
-    return `${n}`;
-  } else if (n < 1e6) {
-    return `${intl.format(n / 1e3)}K`;
-  } else if (n < 1e9) {
-    return `${intl.format(n / 1e6)}M`;
-  } else {
-    return `${intl.format(n / 1e8)}BTC`;
-  }
-}
+import { convertSatsToFiat } from "@ngine/money";
+import type { Currency, Rates } from "@ngine/money";
+import { formatSatAmount } from "@ngine/format";
 
 function valueToEmoji(sats: number) {
   if (sats < 420) {
@@ -95,9 +79,17 @@ interface SatSliderProps {
   minSendable: number;
   maxSendable: number;
   onSelect(amt: number): void;
+  currency: Currency;
+  rates?: Rates;
 }
 
-function SatSlider({ minSendable, maxSendable, onSelect }: SatSliderProps) {
+function SatSlider({
+  minSendable,
+  maxSendable,
+  onSelect,
+  currency,
+  rates,
+}: SatSliderProps) {
   const [amount, setAmount] = useState(defaultZapAmount);
   const min = Math.max(1, Math.floor(minSendable / 1000));
   const max = Math.min(Math.floor(maxSendable / 1000), 2e6);
@@ -133,17 +125,42 @@ function SatSlider({ minSendable, maxSendable, onSelect }: SatSliderProps) {
       <Flex flexWrap="wrap" gap={3}>
         {amounts
           .filter((a) => a >= min && a <= max)
-          .map((a) => (
-            <Button
-              key={a}
-              variant="solid"
-              flexGrow="1"
-              colorScheme={amount === a ? "brand" : "gray"}
-              onClick={() => selectAmount(a)}
-            >
-              {valueToEmoji(a)} {formatShortNumber(a)}
-            </Button>
-          ))}
+          .map((a) => {
+            return (
+              <Stack
+                key={a}
+                align="center"
+                cursor="pointer"
+                p={2}
+                gap={0}
+                flexGrow="1"
+                borderRadius="16px"
+                sx={{
+                  bg: amount === a ? "brand.200" : "gray.100",
+                  _dark: {
+                    bg: amount === a ? "brand.400" : "gray.600",
+                  },
+                }}
+                onClick={() => selectAmount(a)}
+              >
+                <Text as="span" fontSize="lg">
+                  {valueToEmoji(a)}
+                </Text>
+                <Text as="span" fontWeight={700}>
+                  {formatSatAmount(a, "BTC")}
+                </Text>
+                {rates && (
+                  <Text as="span" fontSize="sm">
+                    <FormattedNumber
+                      value={Number(convertSatsToFiat(String(a), rates))}
+                      style="currency"
+                      currency={currency}
+                    />
+                  </Text>
+                )}
+              </Stack>
+            );
+          })}
       </Flex>
       <NumberInput
         defaultValue={defaultZapAmount}
@@ -158,6 +175,20 @@ function SatSlider({ minSendable, maxSendable, onSelect }: SatSliderProps) {
           <NumberDecrementStepper />
         </NumberInputStepper>
       </NumberInput>
+      {rates && (
+        <Text
+          fontSize="sm"
+          sx={{ color: "gray.600", _dark: { color: "gray.400" } }}
+        >
+          {amount} sats
+          {" = "}
+          <FormattedNumber
+            value={Number(convertSatsToFiat(String(amount), rates))}
+            style="currency"
+            currency="USD"
+          />
+        </Text>
+      )}
     </Stack>
   );
 }
@@ -167,11 +198,18 @@ interface ZapModalProps {
   event?: NDKEvent;
   isOpen: boolean;
   onClose(): void;
-  currency?: string;
-  exchangeRate?: number;
+  currency: Currency;
+  rates?: Rates;
 }
 
-function SingleZapModal({ pubkey, event, isOpen, onClose }: ZapModalProps) {
+function SingleZapModal({
+  pubkey,
+  event,
+  isOpen,
+  onClose,
+  currency,
+  rates,
+}: ZapModalProps) {
   const sign = useSign();
   const toast = useToast();
   const [relays] = useRelays();
@@ -308,6 +346,8 @@ function SingleZapModal({ pubkey, event, isOpen, onClose }: ZapModalProps) {
             {lnurl && !invoice && (
               <Stack spacing={2}>
                 <SatSlider
+                  currency="USD"
+                  rates={rates}
                   minSendable={lnurl.minSendable}
                   maxSendable={lnurl.maxSendable}
                   onSelect={setAmount}
@@ -364,7 +404,7 @@ function SingleZapModal({ pubkey, event, isOpen, onClose }: ZapModalProps) {
             colorScheme="brand"
             onClick={onZap}
           >
-            Zap {formatShortNumber(amount)}
+            Zap {formatSatAmount(amount, currency, rates)}
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -381,6 +421,8 @@ function MultiZapModal({
   zapSplits,
   isOpen,
   onClose,
+  currency,
+  rates,
 }: MultiZapModalProps) {
   const sign = useSign();
   const toast = useToast();
@@ -527,6 +569,8 @@ function MultiZapModal({
             {lnurls && !invoices && (
               <>
                 <SatSlider
+                  currency="USD"
+                  rates={rates}
                   minSendable={Math.max(
                     ...lnurls.map((l) => l!.minSendable ?? 21),
                   )}
@@ -578,10 +622,10 @@ function MultiZapModal({
                       justifyContent="flex-end"
                     >
                       <Text as="span" fontSize="md">
-                        {formatShortNumber(Number(percentage.toFixed(0)))}%
+                        {Number(percentage.toFixed(0))}%
                       </Text>
                       <Text color="secondary" as="span" fontSize="sm">
-                        {formatShortNumber(gets)}
+                        {formatSatAmount(gets, currency, rates)}
                       </Text>
                     </Flex>
                   </Flex>
@@ -622,7 +666,7 @@ function MultiZapModal({
             colorScheme="brand"
             onClick={onZap}
           >
-            Zap {formatShortNumber(amount)}
+            Zap {formatSatAmount(amount, currency, rates)}
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -635,6 +679,8 @@ export default function ZapModal({
   event,
   isOpen,
   onClose,
+  currency,
+  rates,
 }: ZapModalProps) {
   const zapSplits = useMemo(() => {
     if (event) {
@@ -649,6 +695,8 @@ export default function ZapModal({
       zapSplits={zapSplits}
       isOpen={isOpen}
       onClose={onClose}
+      currency={currency}
+      rates={rates}
     />
   ) : (
     <SingleZapModal
@@ -656,6 +704,8 @@ export default function ZapModal({
       event={event}
       isOpen={isOpen}
       onClose={onClose}
+      currency={currency}
+      rates={rates}
     />
   );
 }

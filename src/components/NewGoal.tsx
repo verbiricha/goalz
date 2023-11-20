@@ -25,11 +25,11 @@ import useSession from "@ngine/hooks/useSession";
 import useRelays from "@ngine/hooks/useRelays";
 import { useSign } from "@ngine/context";
 import ImageUploader from "@ngine/components/ImageUploader";
+import { convertSatsToFiat, convertFiatToSats } from "@ngine/money";
 
 import { GoalPreview, Shares } from "@goalz/components/Goal";
 import { GOAL } from "@goalz/const";
 import { ratesAtom, fiatCurrencyAtom } from "@goalz/state";
-import { convertSatsToFiat, convertFiatToSats } from "@goalz/money";
 
 function getMinimumDate() {
   var currentDate = new Date();

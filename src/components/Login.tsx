@@ -24,7 +24,7 @@ import { ChevronDown } from "@ngine/icons";
 import { User, Target, Close } from "@ngine/icons";
 
 import LoginDialog from "@goalz/components/LoginDialog";
-//import CurrencySwitch from "./CurrencySwitch";
+import CurrencySwitch from "./CurrencySwitch";
 import ColorModeSwitch from "./ColorModeSwitch";
 
 interface UserMenuProps {
@@ -62,6 +62,9 @@ function UserMenu({ pubkey }: UserMenuProps) {
         </MenuItem>
         <MenuDivider />
         <MenuGroup title="Settings">
+          <MenuItem closeOnSelect={false}>
+            <CurrencySwitch />
+          </MenuItem>
           <MenuItem closeOnSelect={false}>
             <ColorModeSwitch />
           </MenuItem>
