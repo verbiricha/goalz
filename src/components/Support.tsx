@@ -28,9 +28,11 @@ import {
   NumberDecrementStepper,
   Textarea,
   Icon,
-  UnorderedList,
+  List,
   ListItem,
+  ListIcon,
 } from "@chakra-ui/react";
+import { CheckIcon } from "@chakra-ui/icons";
 import { useAtomValue } from "jotai";
 
 import { SUPPORT, HEYA_PUBKEY } from "@goalz/const";
@@ -347,14 +349,16 @@ export default function Support() {
           their supporters.
         </Text>
         <Text textAlign="center">Becoming a supporter comes with perks:</Text>
-        <UnorderedList>
+        <List>
           <ListItem>
+            <ListIcon as={CheckIcon} color="green.500" />
             Your profile will be listed on the supporters section
           </ListItem>
           <ListItem>
+            <ListIcon as={CheckIcon} color="green.500" />
             Your latest goal will be featured on the home page
           </ListItem>
-        </UnorderedList>
+        </List>
       </Stack>
       <Stack align="center">
         <SupportButton size="md" isDisabled={!isLoggedIn} />
