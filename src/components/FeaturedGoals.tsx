@@ -11,6 +11,7 @@ export default function FeaturedGoals({ events }: FeaturedGoalsProps) {
   return (
     <Flex w="100vw" justify="center" px={4}>
       <HStack
+        align="flex-start"
         spacing={5}
         py={2}
         sx={{
