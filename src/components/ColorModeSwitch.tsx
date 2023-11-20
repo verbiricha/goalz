@@ -12,7 +12,7 @@ export default function ColorModeSwitcher() {
         isChecked={colorMode === "light"}
         size="sm"
       >
-        Toggle theme
+        Light theme
       </Switch>
 
       <Icon
