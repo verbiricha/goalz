@@ -617,11 +617,20 @@ function getRandomNumberInRangeWithIncrements(
   return result;
 }
 
+function getRandomElement<T>(list: T[]) {
+  const randomIndex = Math.floor(Math.random() * list.length);
+  return list[randomIndex];
+}
+
 export function GoalBubble({ event }: { event: NDKEvent }) {
   const { image } = useGoalInfo(event);
 
   const multipleOf100 = useMemo(() => {
     return getRandomValueMappedTo100();
+  }, [event]);
+
+  const color = useMemo(() => {
+    return getRandomElement(["brand", "orange", "teal", "pink"]);
   }, [event]);
 
   const size = useMemo(() => {
@@ -631,16 +640,14 @@ export function GoalBubble({ event }: { event: NDKEvent }) {
   return (
     <Box
       border="2px solid"
-      borderColor={`${
-        multipleOf100 > 500 ? "orange" : "brand"
-      }.${multipleOf100}`}
+      borderColor={`${color}.${multipleOf100}`}
       borderRadius="50%"
     >
       <Image
         width={`${size}px`}
         height={`${size}px`}
         src={image}
-        fit="contain"
+        fit="cover"
         borderRadius="50%"
         border="2px solid"
         borderColor="chakra-body-bg"
