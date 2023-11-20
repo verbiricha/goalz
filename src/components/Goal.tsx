@@ -231,7 +231,7 @@ export function GoalCard({ event, ...rest }: GoalCardProps) {
         {image && (
           <>
             <Image
-              maxH="236px"
+              h="236px"
               w="100%"
               objectFit="cover"
               borderTopLeftRadius="md"
