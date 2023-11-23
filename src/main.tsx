@@ -8,7 +8,15 @@ import { NgineProvider } from "@ngine/context";
 import { DEFAULT_RELAYS } from "@ngine/const";
 
 import theme from "./theme";
-import { HOME, GOAL, NEW_GOAL, PROFILE, ALL, ONBOARDING } from "./routes";
+import {
+  HOME,
+  GOAL,
+  NEW_GOAL,
+  PROFILE,
+  ALL,
+  ONBOARDING,
+  SUPPORT,
+} from "./routes";
 import Main from "./layouts/Main";
 import LoggedIn from "./layouts/LoggedIn";
 import Home from "./pages/Home";
@@ -17,6 +25,7 @@ import Goal from "./pages/Goal";
 import Profile from "./pages/Profile";
 import All from "./pages/All";
 import Onboarding from "./pages/Onboarding";
+import Support from "./pages/Support";
 
 // NDK Instance
 const dexieAdapter = new NDKCacheAdapterDexie({ dbName: "goalz" });
@@ -53,6 +62,10 @@ const router = createBrowserRouter([
       {
         path: PROFILE,
         element: <Profile />,
+      },
+      {
+        path: SUPPORT,
+        element: <Support />,
       },
       {
         element: <LoggedIn />,
