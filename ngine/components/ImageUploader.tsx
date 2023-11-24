@@ -1,45 +1,19 @@
 import { useState, type ChangeEvent } from "react";
 import { VoidApi } from "@void-cat/api";
+import { base64 } from "@scure/base";
+import { NDKKind } from "@nostr-dev-kit/ndk";
 import { useToast, Stack, Input, Avatar } from "@chakra-ui/react";
 
+import { useSign } from "@ngine/context";
+import { unixNow } from "@ngine/time";
+
 const FILE_EXT_REGEX = /\.([\w]{1,7})$/i;
+const VOID_CAT_HOST = "https://void.cat";
 
 type UploadResult = {
   url?: string;
   error?: string;
 };
-
-// void.cat
-
-const voidCatHost = "https://void.cat";
-const voidCatApi = new VoidApi(voidCatHost);
-
-async function voidCatUpload(file: File): Promise<UploadResult> {
-  const uploader = voidCatApi.getUploader(file);
-
-  const rsp = await uploader.upload({
-    "V-Strip-Metadata": "true",
-  });
-  if (rsp.ok) {
-    let ext = file.name.match(FILE_EXT_REGEX);
-    if (rsp.file?.metadata?.mimeType === "image/webp") {
-      ext = ["", "webp"];
-    }
-    const resultUrl =
-      rsp.file?.metadata?.url ??
-      `${voidCatHost}/d/${rsp.file?.id}${ext ? `.${ext[1]}` : ""}`;
-
-    const ret = {
-      url: resultUrl,
-    } as UploadResult;
-
-    return ret;
-  } else {
-    return {
-      error: rsp.errorMessage,
-    };
-  }
-}
 
 interface ImageUploaderProps {
   showPreview?: boolean;
@@ -52,9 +26,28 @@ export default function ImageUploader({
   onImageUpload,
   defaultImage,
 }: ImageUploaderProps) {
+  const sign = useSign();
   const [avatar, setAvatar] = useState<string | undefined>(defaultImage);
   const [isUploading, setIsUploading] = useState(false);
   const toast = useToast();
+
+  async function auth(url: string, method: string) {
+    const e = {
+      kind: 27235 as NDKKind,
+      created_at: unixNow(),
+      content: "",
+      tags: [
+        ["u", url],
+        ["method", method],
+      ],
+    };
+    const signed = await sign(e);
+    const authEvent = signed.rawEvent();
+    const token = base64.encode(
+      new TextEncoder().encode(JSON.stringify(authEvent)),
+    );
+    return `Nostr: ${token}`;
+  }
 
   async function onFileChange(ev: ChangeEvent<HTMLInputElement>) {
     const file = ev.target.files && ev.target.files[0];
@@ -87,6 +80,34 @@ export default function ImageUploader({
       } finally {
         setIsUploading(false);
       }
+    }
+  }
+
+  async function voidCatUpload(file: File): Promise<UploadResult> {
+    const voidCatApi = new VoidApi(VOID_CAT_HOST, auth);
+    const uploader = voidCatApi.getUploader(file);
+
+    const rsp = await uploader.upload({
+      "V-Strip-Metadata": "true",
+    });
+    if (rsp.ok) {
+      let ext = file.name.match(FILE_EXT_REGEX);
+      if (rsp.file?.metadata?.mimeType === "image/webp") {
+        ext = ["", "webp"];
+      }
+      const resultUrl =
+        rsp.file?.metadata?.url ??
+        `${VOID_CAT_HOST}/d/${rsp.file?.id}${ext ? `.${ext[1]}` : ""}`;
+
+      const ret = {
+        url: resultUrl,
+      } as UploadResult;
+
+      return ret;
+    } else {
+      return {
+        error: rsp.errorMessage,
+      };
     }
   }
 
