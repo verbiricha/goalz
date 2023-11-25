@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { FormattedDate } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import {
+  useColorModeValue,
   Flex,
   Box,
   Spinner,
@@ -345,6 +346,7 @@ export function GoalDetail({ event }: GoalDetailProps) {
   }, [zapRequests]);
   const hasMultipleBeneficiaries =
     event.tags.filter((t) => t[0] === "zap")?.length > 1;
+  const msgColor = useColorModeValue("gray.600", "gray.400");
   return (
     <Flex
       gap={3}
@@ -416,7 +418,7 @@ export function GoalDetail({ event }: GoalDetailProps) {
                     <Text
                       as="blockquote"
                       fontSize={{ base: "sm", md: "md" }}
-                      color="gray.600"
+                      color={msgColor}
                       sx={{
                         borderLeft: "2px solid",
                         borderColor: "gray.300",
@@ -451,7 +453,7 @@ export function GoalDetail({ event }: GoalDetailProps) {
                     <Text
                       as="blockquote"
                       fontSize={{ base: "sm", md: "md" }}
-                      color="gray.600"
+                      color={msgColor}
                       sx={{
                         borderLeft: "2px solid",
                         borderColor: "gray.300",
