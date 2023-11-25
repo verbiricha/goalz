@@ -10,7 +10,7 @@ interface MarkdownProps extends StackProps {
 
 export default function Markdown({ content, ...rest }: MarkdownProps) {
   return (
-    <Stack fontSize="sm" {...rest}>
+    <Stack {...rest}>
       <ReactMarkdown
         components={{
           a({ children, ...props }) {

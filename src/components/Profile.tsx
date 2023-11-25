@@ -26,6 +26,7 @@ import type { NDKEvent } from "@nostr-dev-kit/ndk";
 
 import User from "@ngine/components/User";
 import FollowButton from "@ngine/components/FollowButton";
+import Markdown from "@ngine/components/Markdown";
 import useProfile from "@ngine/nostr/useProfile";
 import useEvents from "@ngine/nostr/useEvents";
 import useCopy from "@ngine/hooks/useCopy";
@@ -213,7 +214,7 @@ export default function Profile({ pubkey }: ProfileProps) {
         <User pubkey={pubkey} size="lg" fontSize="3xl" fontWeight={700} />
         <FollowButton variant="outline" pubkey={pubkey} />
       </Flex>
-      {profile?.about && <Text>{profile.about}</Text>}
+      {profile?.about && <Markdown content={profile.about} />}
       {profile?.lud16 && (
         <LightningAddress pubkey={pubkey} address={profile.lud16} />
       )}

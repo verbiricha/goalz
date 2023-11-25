@@ -264,7 +264,7 @@ export function GoalCard({ event, ...rest }: GoalCardProps) {
             {title}
           </Heading>
           <User pubkey={event.pubkey} />
-          {description && <Markdown content={description} />}
+          {description && <Markdown fontSize="sm" content={description} />}
           {href && <ExternalLink href={href} />}
           <Raised latest={latest} goal={goal} raised={total} />
           <Beneficiaries event={event} zaps={zapRequests} />
@@ -385,7 +385,7 @@ export function GoalDetail({ event }: GoalDetailProps) {
           {title}
         </Heading>
         <User pubkey={event.pubkey} />
-        {description && <Markdown content={description} />}
+        {description && <Markdown fontSize="sm" content={description} />}
         {href && <ExternalLink href={href} />}
         <Raised latest={latest} goal={goal} raised={total} />
         <Beneficiaries event={event} zaps={zapRequests} />
@@ -586,7 +586,7 @@ export function GoalPreview({
             </Heading>
           )}
           <User pubkey={pubkey} />
-          {description && <Markdown content={description} />}
+          {description && <Markdown fontSize="sm" content={description} />}
           {href && <ExternalLink href={href} />}
           <Raised goal={goal} raised={0} />
           <Shares zapTags={zapSplits} />
