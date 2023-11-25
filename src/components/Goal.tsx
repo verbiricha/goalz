@@ -27,6 +27,7 @@ import { useAtomValue } from "jotai";
 import { Image as ImageIcon } from "@ngine/icons";
 import User from "@ngine/components/User";
 import Avatar from "@ngine/components/Avatar";
+import Markdown from "@ngine/components/Markdown";
 import Link from "@ngine/components/Link";
 import useEvent from "@ngine/nostr/useEvent";
 import useEvents from "@ngine/nostr/useEvents";
@@ -263,7 +264,7 @@ export function GoalCard({ event, ...rest }: GoalCardProps) {
             {title}
           </Heading>
           <User pubkey={event.pubkey} />
-          {description && <Text fontSize="sm">{description}</Text>}
+          {description && <Markdown content={description} />}
           {href && <ExternalLink href={href} />}
           <Raised latest={latest} goal={goal} raised={total} />
           <Beneficiaries event={event} zaps={zapRequests} />
@@ -384,7 +385,7 @@ export function GoalDetail({ event }: GoalDetailProps) {
           {title}
         </Heading>
         <User pubkey={event.pubkey} />
-        {description && <Text fontSize="sm">{description}</Text>}
+        {description && <Markdown content={description} />}
         {href && <ExternalLink href={href} />}
         <Raised latest={latest} goal={goal} raised={total} />
         <Beneficiaries event={event} zaps={zapRequests} />
@@ -585,7 +586,7 @@ export function GoalPreview({
             </Heading>
           )}
           <User pubkey={pubkey} />
-          {description && <Text fontSize="sm">{description}</Text>}
+          {description && <Markdown content={description} />}
           {href && <ExternalLink href={href} />}
           <Raised goal={goal} raised={0} />
           <Shares zapTags={zapSplits} />
