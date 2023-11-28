@@ -6,10 +6,9 @@ import {
   MenuItem,
   Icon,
 } from "@chakra-ui/react";
-import { HamburgerIcon } from "@chakra-ui/icons";
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 
-import { Copy } from "@ngine/icons";
+import { Copy, Dots } from "@ngine/icons";
 import useCopy from "@ngine/hooks/useCopy";
 
 interface EventMenuProps {
@@ -32,7 +31,7 @@ export default function EventMenu({ event }: EventMenuProps) {
   return (
     <Menu>
       <MenuButton>
-        <Icon as={HamburgerIcon} boxSize={3} color="gray.400" />
+        <Icon as={Dots} boxSize={3} color="gray.400" />
       </MenuButton>
       <MenuList>
         <MenuItem icon={<Icon as={Copy} />} onClick={copyId}>

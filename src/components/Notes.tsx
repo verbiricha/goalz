@@ -21,6 +21,9 @@ export default function Notes({ ids }: NotesProps) {
       cacheUsage: NDKSubscriptionCacheUsage.PARALLEL,
     },
   );
+  const components = {
+    [GOAL]: GoalCard,
+  };
 
   return (
     <Stack align="center" gap={8}>
@@ -33,12 +36,7 @@ export default function Notes({ ids }: NotesProps) {
         wrap="wrap"
       >
         {events.map((e) => (
-          <Note
-            maxW="410px"
-            key={e.id}
-            event={e}
-            components={{ [GOAL]: (props) => <GoalCard {...props} /> }}
-          />
+          <Note maxW="410px" key={e.id} event={e} components={components} />
         ))}
       </HStack>
     </Stack>

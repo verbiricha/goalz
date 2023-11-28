@@ -11,6 +11,7 @@ import { Fragment, Components } from "@ngine/types";
 
 // eslint-disable-next-line no-useless-escape
 const FileExtensionRegex = /\.([\w]+)$/i;
+const HashtagRegex = /(#[^\s!@#$%^&*()=+.\/,\[{\]};:'"?><]+)/g;
 
 interface HyperTextProps extends LinkProps {
   link: string;
@@ -157,7 +158,7 @@ function extractNevents(fragments: Fragment[], components: Components) {
                 const { id, relays } = decoded.data;
                 return (
                   <NEvent
-                    key={nevent}
+                    key={id}
                     id={id}
                     relays={relays || []}
                     components={components}
@@ -178,6 +179,23 @@ function extractNevents(fragments: Fragment[], components: Components) {
     .flat();
 }
 
+function extractHashtags(fragments: Fragment[]) {
+  return fragments
+    .map((f) => {
+      if (typeof f === "string") {
+        return f.split(HashtagRegex).map((i) => {
+          if (i.toLowerCase().startsWith("#")) {
+            return <Link href={`/t/${i.slice(1)}`}>{i}</Link>;
+          } else {
+            return i;
+          }
+        });
+      }
+      return f;
+    })
+    .flat();
+}
+
 function transformText(
   fragments: Fragment[],
   components: Components,
@@ -185,6 +203,7 @@ function transformText(
   let result = extractNprofiles(fragments);
   result = extractNpubs(result);
   result = extractNevents(result, components);
+  result = extractHashtags(result);
   //fragments = extractNaddrs(fragments);
   //fragments = extractNoteIds(fragments);
 
@@ -216,7 +235,7 @@ export default function Markdown({
         );
       },
     };
-  }, [components]);
+  }, []);
   return (
     <Stack {...rest}>
       <ReactMarkdown

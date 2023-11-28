@@ -18,6 +18,9 @@ import {
   FormLabel,
   FormHelperText,
   FormErrorMessage,
+  Tag,
+  TagLabel,
+  TagCloseButton,
 } from "@chakra-ui/react";
 
 import Avatar from "@ngine/components/Avatar";
@@ -38,6 +41,71 @@ function getMinimumDate() {
   return currentDate.toLocaleDateString("en-CA");
 }
 
+interface TagsProps {
+  onChange(tags: string[]): void;
+}
+
+function TagsFormControl({ onChange }: TagsProps) {
+  const [tags, setTags] = useState<string[]>(["bitcoin"]);
+  const [currentTag, setCurrentTag] = useState("");
+
+  function addTag(t: string) {
+    if (tags.includes(t)) {
+      return;
+    }
+    const newTags = tags.concat([t]);
+    setTags(newTags);
+    onChange(newTags);
+  }
+
+  function removeTag(t: string) {
+    const newTags = tags.filter((tag) => tag !== t);
+    setTags(newTags);
+    onChange(newTags);
+  }
+
+  function handleAddTag() {
+    addTag(currentTag);
+    setCurrentTag("");
+  }
+
+  return (
+    <FormControl>
+      <FormLabel>Tags (optional)</FormLabel>
+      <InputGroup>
+        <Input
+          value={currentTag}
+          onChange={(ev) => setCurrentTag(ev.target.value)}
+        />
+        <InputRightElement width="4.5rem">
+          <Button
+            size="sm"
+            variant="outline"
+            isDisabled={currentTag.trim().length === 0}
+            onClick={() => handleAddTag()}
+          >
+            Add
+          </Button>
+        </InputRightElement>
+      </InputGroup>
+      <FormHelperText>
+        {tags.length === 0 ? (
+          `Add up to 3 tags to your goal`
+        ) : (
+          <HStack wrap="wrap">
+            {tags.map((t) => (
+              <Tag size="sm" variant="subtle">
+                <TagLabel>{t}</TagLabel>
+                <TagCloseButton onClick={() => removeTag(t)} />
+              </Tag>
+            ))}
+          </HStack>
+        )}
+      </FormHelperText>
+    </FormControl>
+  );
+}
+
 function CreateGoal() {
   const toast = useToast();
   const [session] = useSession();
@@ -55,6 +123,7 @@ function CreateGoal() {
   const [closedAt, setClosedAt] = useState<Date | undefined>();
   const [zapSplits, setZapSplits] = useState<string[][]>([]);
   const [image, setImage] = useState<string | undefined>();
+  const [tags, setTags] = useState<string[]>([]);
   const isValidZapGoal = Number(amount) > 0 && name;
   // Beneficiaries
   const [weight, setWeigth] = useState("");
@@ -136,6 +205,7 @@ function CreateGoal() {
       tags: [
         ["relays", ...relays],
         ["amount", String(Number(amount) * 1000)],
+        ...tags.map((t) => ["t", t]),
       ],
       content: name,
     };
@@ -265,6 +335,7 @@ function CreateGoal() {
               onChange={(ev) => setClosedAt(ev.target.value as unknown as Date)}
             />
           </FormControl>
+          <TagsFormControl onChange={setTags} />
           <FormControl>
             <HStack align="flex-end" gap={4}>
               <Box flex="1">
@@ -305,10 +376,8 @@ function CreateGoal() {
               </Button>
             </HStack>
             <FormHelperText>
-              <Text fontSize="xs">
-                Please make sure the beneficiaries have a lightning wallet
-                connected to their profiles.
-              </Text>
+              Please make sure the beneficiaries have a lightning wallet
+              connected to their profiles.
             </FormHelperText>
           </FormControl>
           <Shares zapTags={zapSplits} onDelete={onDeletePubkey} />
@@ -330,6 +399,7 @@ function CreateGoal() {
           goal={Number(amount)}
           closedAt={closedAt}
           image={image}
+          tags={tags}
           href={url}
           description={description}
           pubkey={session!.pubkey}

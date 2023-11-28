@@ -16,6 +16,7 @@ import {
   ALL,
   ONBOARDING,
   SUPPORT,
+  HASHTAG,
 } from "./routes";
 import Main from "./layouts/Main";
 import LoggedIn from "./layouts/LoggedIn";
@@ -26,6 +27,7 @@ import Profile from "./pages/Profile";
 import All from "./pages/All";
 import Onboarding from "./pages/Onboarding";
 import Support from "./pages/Support";
+import Hashtag from "./pages/Hashtag";
 
 // NDK Instance
 const dexieAdapter = new NDKCacheAdapterDexie({ dbName: "goalz" });
@@ -66,6 +68,10 @@ const router = createBrowserRouter([
       {
         path: SUPPORT,
         element: <Support />,
+      },
+      {
+        path: HASHTAG,
+        element: <Hashtag />,
       },
       {
         element: <LoggedIn />,

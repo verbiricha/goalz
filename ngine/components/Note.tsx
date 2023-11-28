@@ -25,21 +25,21 @@ export default function Note({ event, components, ...rest }: NoteProps) {
   return (
     <Card {...rest}>
       <CardHeader>
-        <HStack align="flex-start" justify="space-between">
-          <HStack align="center">
-            <User pubkey={event.pubkey} fontSize="sm" />
-            <Text color="gray.400" fontSize="sm">
-              {formatRelativeTime(event.created_at ?? 0)}
-            </Text>
-          </HStack>
-          <EventMenu event={event} />
+        <HStack align="center" justify="space-between">
+          <User pubkey={event.pubkey} />
+          <Text color="gray.400" fontSize="sm">
+            {formatRelativeTime(event.created_at ?? 0)}
+          </Text>
         </HStack>
       </CardHeader>
       <CardBody>
         <Markdown content={event.content} components={components} />
       </CardBody>
       <CardFooter>
-        <Reactions event={event} />
+        <HStack align="center" justify="space-between" w="100%">
+          <Reactions event={event} />
+          <EventMenu event={event} />
+        </HStack>
       </CardFooter>
     </Card>
   );

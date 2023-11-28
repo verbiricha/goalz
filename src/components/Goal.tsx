@@ -17,6 +17,7 @@ import {
   Progress,
   AvatarGroup,
   Tag,
+  TagLabel,
   Button,
   Icon,
 } from "@chakra-ui/react";
@@ -62,6 +63,7 @@ interface GoalInfo {
   relays: string[];
   goal: number;
   href?: string;
+  tags: string[];
 }
 
 function useGoalInfo(event: NDKEvent): GoalInfo {
@@ -94,6 +96,9 @@ function useGoalInfo(event: NDKEvent): GoalInfo {
   const href = useMemo(() => {
     return event.tagValue("r");
   }, [event.id]);
+  const tags = useMemo(() => {
+    return event.tags.filter((t) => t[0] === "t").map((t) => t[1]);
+  }, [event.id]);
 
   return {
     link,
@@ -105,6 +110,7 @@ function useGoalInfo(event: NDKEvent): GoalInfo {
     relays,
     goal,
     href,
+    tags,
   };
 }
 
@@ -192,6 +198,7 @@ export function GoalCard({ event, ...rest }: GoalCardProps) {
     relays,
     goal,
     href,
+    tags,
   } = useGoalInfo(event);
   const navigate = useNavigate();
   const { currency, rates } = useCurrencySettings();
@@ -266,6 +273,13 @@ export function GoalCard({ event, ...rest }: GoalCardProps) {
           </Heading>
           <User pubkey={event.pubkey} />
           {description && <Markdown fontSize="sm" content={description} />}
+          <HStack wrap="wrap">
+            {tags.map((t) => (
+              <Tag size="sm" variant="subtle">
+                <TagLabel>{t}</TagLabel>
+              </Tag>
+            ))}
+          </HStack>
           {href && <ExternalLink href={href} />}
           <Raised latest={latest} goal={goal} raised={total} />
           <Beneficiaries event={event} zaps={zapRequests} />
@@ -306,6 +320,7 @@ export function GoalDetail({ event }: GoalDetailProps) {
     relays,
     goal,
     href,
+    tags,
   } = useGoalInfo(event);
   const navigate = useNavigate();
   // Zaps
@@ -388,6 +403,13 @@ export function GoalDetail({ event }: GoalDetailProps) {
         </Heading>
         <User pubkey={event.pubkey} />
         {description && <Markdown fontSize="sm" content={description} />}
+        <HStack wrap="wrap">
+          {tags.map((t) => (
+            <Tag size="sm" variant="subtle">
+              <TagLabel>{t}</TagLabel>
+            </Tag>
+          ))}
+        </HStack>
         {href && <ExternalLink href={href} />}
         <Raised latest={latest} goal={goal} raised={total} />
         <Beneficiaries event={event} zaps={zapRequests} />
@@ -521,6 +543,7 @@ interface GoalPreviewProps {
   goal: number;
   closedAt?: Date;
   zapSplits: string[][];
+  tags: string[];
 }
 
 export function GoalPreview({
@@ -531,6 +554,7 @@ export function GoalPreview({
   href,
   goal,
   closedAt,
+  tags,
   zapSplits,
 }: GoalPreviewProps) {
   const isExpired = closedAt && closedAt < new Date();
@@ -589,6 +613,13 @@ export function GoalPreview({
           )}
           <User pubkey={pubkey} />
           {description && <Markdown fontSize="sm" content={description} />}
+          <HStack wrap="wrap">
+            {tags.map((t) => (
+              <Tag size="sm" variant="subtle">
+                <TagLabel>{t}</TagLabel>
+              </Tag>
+            ))}
+          </HStack>
           {href && <ExternalLink href={href} />}
           <Raised goal={goal} raised={0} />
           <Shares zapTags={zapSplits} />

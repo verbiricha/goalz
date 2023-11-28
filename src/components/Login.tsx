@@ -21,7 +21,7 @@ import {
 import Avatar from "@ngine/components/Avatar";
 import useSession from "@ngine/hooks/useSession";
 import { ChevronDown } from "@ngine/icons";
-import { User, Target, Close } from "@ngine/icons";
+import { User, Target, Users, Close } from "@ngine/icons";
 
 import LoginDialog from "@goalz/components/LoginDialog";
 import CurrencySwitch from "./CurrencySwitch";
@@ -59,6 +59,9 @@ function UserMenu({ pubkey }: UserMenuProps) {
         </MenuItem>
         <MenuItem icon={<Icon as={Target} />} onClick={() => navigate(`/new`)}>
           New goal
+        </MenuItem>
+        <MenuItem icon={<Icon as={Users} />} onClick={() => navigate(`/all`)}>
+          Contacts
         </MenuItem>
         <MenuDivider />
         <MenuGroup title="Settings">

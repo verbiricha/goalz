@@ -5,3 +5,4 @@ export const PROFILE = "/p/:npub";
 export const ALL = "/all";
 export const ONBOARDING = "/onboarding";
 export const SUPPORT = "/support";
+export const HASHTAG = "/t/:tag";

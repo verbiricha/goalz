@@ -19,3 +19,6 @@ export * from "./Key";
 export * from "./Logo";
 export * from "./Heart";
 export * from "./Reply";
+export * from "./Repost";
+export * from "./Dots";
+export * from "./Users";
