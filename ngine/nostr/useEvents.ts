@@ -27,9 +27,13 @@ export function hash(obj: MyObject): string {
   return hashHex;
 }
 
+interface SubscriptionOptions extends NDKSubscriptionOptions {
+  disable?: boolean;
+}
+
 export default function useEvents(
   filter: NDKFilter | NDKFilter[],
-  opts?: NDKSubscriptionOptions,
+  opts?: SubscriptionOptions,
   relays?: string[],
 ) {
   const ndk = useNDK();
@@ -40,7 +44,7 @@ export default function useEvents(
   }, [filter]);
 
   useEffect(() => {
-    if (filter) {
+    if (filter && !opts?.disabled) {
       const relaySet = relays
         ? NDKRelaySet.fromRelayUrls(relays, ndk)
         : undefined;

@@ -7,6 +7,7 @@ import OrbitingGoals from "@goalz/components/OrbitingGoals";
 import FeaturedGoals from "@goalz/components/FeaturedGoals";
 import Features from "@goalz/components/Features";
 import Support from "@goalz/components/Support";
+import Notes from "@goalz/components/Notes";
 import useSupporters from "@goalz/hooks/useSupporters";
 import { NEW_GOAL } from "@goalz/routes";
 import { GOAL, HEYA_PUBKEY } from "@goalz/const";
@@ -77,6 +78,7 @@ export default function Home() {
         ctaText="Create a goal"
         ctaAction={createZapGoal}
       />
+      <Notes />
     </Stack>
   );
 }
