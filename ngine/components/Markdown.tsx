@@ -1,4 +1,4 @@
-import { useCallback, ReactNode } from "react";
+import { useMemo, useCallback, ReactNode } from "react";
 import { Stack, StackProps, Image, LinkProps } from "@chakra-ui/react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -201,25 +201,27 @@ export default function Markdown({
   components,
   ...rest
 }: MarkdownProps) {
+  const markdownComponents = useMemo(() => {
+    return {
+      p({ children }: { children: string }) {
+        return (
+          <p>{transformText([children], components ?? ({} as Components))}</p>
+        );
+      },
+      a({ href, children, ...props }: { href: string; children: string }) {
+        return (
+          <HyperText link={href || ""} {...props} isExternal>
+            {children}
+          </HyperText>
+        );
+      },
+    };
+  }, [components]);
   return (
     <Stack {...rest}>
       <ReactMarkdown
-        components={{
-          p({ children }) {
-            return (
-              <p>
-                {transformText([children], components ?? ({} as Components))}
-              </p>
-            );
-          },
-          a({ href, children, ...props }) {
-            return (
-              <HyperText link={href || ""} {...props} isExternal>
-                {children}
-              </HyperText>
-            );
-          },
-        }}
+        // @ts-ignore
+        components={markdownComponents}
         allowedElements={["p", "a"]}
         skipHtml={true}
         remarkPlugins={[remarkGfm]}
