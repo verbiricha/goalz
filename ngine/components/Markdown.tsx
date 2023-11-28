@@ -1,14 +1,18 @@
 import { useCallback, ReactNode } from "react";
-import { Stack, StackProps, Image } from "@chakra-ui/react";
+import { Stack, StackProps, Image, LinkProps } from "@chakra-ui/react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { nip19 } from "nostr-tools";
 
 import Link from "./Link";
+import Username from "./Username";
+import NEvent from "./NEvent";
+import { Fragment, Components } from "@ngine/types";
 
 // eslint-disable-next-line no-useless-escape
 const FileExtensionRegex = /\.([\w]+)$/i;
 
-interface HyperTextProps {
+interface HyperTextProps extends LinkProps {
   link: string;
   children: ReactNode;
 }
@@ -33,7 +37,6 @@ export function HyperText({ link, children, ...rest }: HyperTextProps) {
                 alt={url.toString()}
                 maxH="420px"
                 width="100%"
-                my={4}
                 objectFit="contain"
               />
             );
@@ -77,20 +80,143 @@ export function HyperText({ link, children, ...rest }: HyperTextProps) {
   return render();
 }
 
-interface MarkdownProps extends StackProps {
-  content: string;
+const NostrPrefixRegex = /^nostr:/;
+
+function extractNprofiles(fragments: Fragment[]): Fragment[] {
+  return fragments
+    .map((f) => {
+      if (typeof f === "string") {
+        return f.split(/(nostr:nprofile1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("nostr:nprofile1")) {
+            try {
+              const nprofile = i.replace(NostrPrefixRegex, "");
+              const decoded = nip19.decode(nprofile);
+              if (decoded.type === "nprofile") {
+                const { pubkey } = decoded.data;
+                return (
+                  <Link href={`/p/${nprofile}`}>
+                    <Username as="span" pubkey={pubkey} />;
+                  </Link>
+                );
+              }
+              return null;
+            } catch (error) {
+              return i;
+            }
+          } else {
+            return i;
+          }
+        });
+      }
+      return f;
+    })
+    .flat();
 }
 
-export default function Markdown({ content, ...rest }: MarkdownProps) {
+function extractNpubs(fragments: Fragment[]): Fragment[] {
+  return fragments
+    .map((f) => {
+      if (typeof f === "string") {
+        return f.split(/(nostr:npub1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("nostr:npub1")) {
+            try {
+              const raw = i.replace(NostrPrefixRegex, "");
+
+              const decoded = nip19.decode(raw);
+              if (decoded.type === "npub") {
+                return (
+                  <Link href={`/p/${raw}`}>
+                    <Username as="span" pubkey={decoded.data as string} />
+                  </Link>
+                );
+              }
+              return null;
+            } catch (error) {
+              return i;
+            }
+          } else {
+            return i;
+          }
+        });
+      }
+      return f;
+    })
+    .flat();
+}
+
+function extractNevents(fragments: Fragment[], components: Components) {
+  return fragments
+    .map((f) => {
+      if (typeof f === "string") {
+        return f.split(/(nostr:nevent1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("nostr:nevent1")) {
+            try {
+              const nevent = i.replace(NostrPrefixRegex, "");
+              const decoded = nip19.decode(nevent);
+              if (decoded.type === "nevent") {
+                const { id, relays } = decoded.data;
+                return (
+                  <NEvent
+                    key={nevent}
+                    id={id}
+                    relays={relays || []}
+                    components={components}
+                  />
+                );
+              }
+              return null;
+            } catch (error) {
+              return i;
+            }
+          } else {
+            return i;
+          }
+        });
+      }
+      return f;
+    })
+    .flat();
+}
+
+function transformText(
+  fragments: Fragment[],
+  components: Components,
+): Fragment[] {
+  let result = extractNprofiles(fragments);
+  result = extractNpubs(result);
+  result = extractNevents(result, components);
+  //fragments = extractNaddrs(fragments);
+  //fragments = extractNoteIds(fragments);
+
+  return result;
+}
+
+interface MarkdownProps extends StackProps {
+  content: string;
+  components?: Components;
+}
+
+export default function Markdown({
+  content,
+  components,
+  ...rest
+}: MarkdownProps) {
   return (
     <Stack {...rest}>
       <ReactMarkdown
         components={{
-          a({ children, ...props }) {
+          p({ children }) {
             return (
-              <Link {...props} isExternal>
+              <p>
+                {transformText([children], components ?? ({} as Components))}
+              </p>
+            );
+          },
+          a({ href, children, ...props }) {
+            return (
+              <HyperText link={href || ""} {...props} isExternal>
                 {children}
-              </Link>
+              </HyperText>
             );
           },
         }}

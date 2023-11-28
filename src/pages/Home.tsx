@@ -78,7 +78,12 @@ export default function Home() {
         ctaText="Create a goal"
         ctaAction={createZapGoal}
       />
-      <Notes />
+      <Notes
+        ids={[
+          "ee5bd8c438291b1d803225a691ffd61e96cda41d492eea7d8b03190a8c9144a6",
+          "b0e513cfbafa8bf14fe7ad47a27436cee43ace712d50b1568077f451b7c3545c",
+        ]}
+      />
     </Stack>
   );
 }

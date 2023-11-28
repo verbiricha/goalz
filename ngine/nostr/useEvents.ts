@@ -44,7 +44,7 @@ export default function useEvents(
   }, [filter]);
 
   useEffect(() => {
-    if (filter && !opts?.disabled) {
+    if (filter && !opts?.disable) {
       const relaySet = relays
         ? NDKRelaySet.fromRelayUrls(relays, ndk)
         : undefined;

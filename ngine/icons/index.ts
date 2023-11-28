@@ -17,3 +17,5 @@ export * from "./ChevronDown";
 export * from "./Close";
 export * from "./Key";
 export * from "./Logo";
+export * from "./Heart";
+export * from "./Reply";
