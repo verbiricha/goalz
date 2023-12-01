@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useAtom } from "jotai";
+import { FormattedMessage } from "react-intl";
 import { Button } from "@chakra-ui/react";
 import type { ButtonProps } from "@chakra-ui/react";
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
@@ -8,6 +9,7 @@ import { followsAtom } from "@ngine/state";
 import { useNDK } from "@ngine/context";
 import useSession from "@ngine/hooks/useSession";
 import { unixNow } from "@ngine/time";
+import messages from "@ngine/messages";
 
 interface FollowButtonProps extends ButtonProps {
   pubkey: string;
@@ -76,7 +78,11 @@ export default function FollowButton({ pubkey, ...rest }: FollowButtonProps) {
       colorScheme={isFollowed ? "red" : "brand"}
       {...rest}
     >
-      {isFollowed ? "Unfollow" : "Follow"}
+      {isFollowed ? (
+        <FormattedMessage {...messages.unfollow} />
+      ) : (
+        <FormattedMessage {...messages.follow} />
+      )}
     </Button>
   );
 }

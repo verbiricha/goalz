@@ -103,6 +103,9 @@ dependencies:
     version: link:@noble/hashes/sha256
 
 devDependencies:
+  '@formatjs/cli':
+    specifier: ^6.2.4
+    version: 6.2.4
   '@types/react':
     specifier: ^18.2.15
     version: 18.2.15
@@ -1827,6 +1830,17 @@ packages:
   /@fontsource/figtree@5.0.15:
     resolution: {integrity: sha512-DQzD4zkwJkKU4pkhnRtLjFOWRJZA3wFrGZJ0bhGClm2Jq1zm3Py6HuCf8W3ynEdAvoYMvvafPhmjUgbbHbEhwA==}
     dev: false
+
+  /@formatjs/cli@6.2.4:
+    resolution: {integrity: sha512-g1o9O143F5TGB55skib3fKbyjifPa9YoDcX9L07hVJocRKngCcu4JhKViyUSN55KGcN2ttfBomM+wihN6wtBSQ==}
+    engines: {node: '>= 16'}
+    hasBin: true
+    peerDependencies:
+      vue: ^3.3.4
+    peerDependenciesMeta:
+      vue:
+        optional: true
+    dev: true
 
   /@formatjs/ecma402-abstract@1.17.2:
     resolution: {integrity: sha512-k2mTh0m+IV1HRdU0xXM617tSQTi53tVR2muvYOsBeYcUgEAyxV1FOC7Qj279th3fBVQ+Dj6muvNJZcHSPNdbKg==}
