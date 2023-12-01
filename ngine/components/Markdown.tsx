@@ -4,9 +4,14 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { nip19 } from "nostr-tools";
 
-import Link from "./Link";
 import Username from "./Username";
 import NEvent from "./NEvent";
+import {
+  useLinks,
+  useLinkComponent,
+  Links,
+  LinkComponent,
+} from "@ngine/context";
 import { Fragment, Components } from "@ngine/types";
 
 // eslint-disable-next-line no-useless-escape
@@ -16,9 +21,10 @@ const HashtagRegex = /(#[^\s!@#$%^&*()=+.\/,\[{\]};:'"?><]+)/g;
 interface HyperTextProps extends LinkProps {
   link: string;
   children: ReactNode;
+  Link: LinkComponent;
 }
 
-export function HyperText({ link, children, ...rest }: HyperTextProps) {
+export function HyperText({ link, children, Link, ...rest }: HyperTextProps) {
   const render = useCallback(() => {
     try {
       const url = new URL(link);
@@ -83,7 +89,11 @@ export function HyperText({ link, children, ...rest }: HyperTextProps) {
 
 const NostrPrefixRegex = /^nostr:/;
 
-function extractNprofiles(fragments: Fragment[]): Fragment[] {
+function extractNprofiles(
+  fragments: Fragment[],
+  links: Links,
+  Link: LinkComponent,
+): Fragment[] {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
@@ -92,10 +102,15 @@ function extractNprofiles(fragments: Fragment[]): Fragment[] {
             try {
               const nprofile = i.replace(NostrPrefixRegex, "");
               const decoded = nip19.decode(nprofile);
+              const url = links.nprofile
+                ? links.nprofile(nprofile)
+                : links.npub
+                ? links.npub(nprofile)
+                : `/${nprofile}`;
               if (decoded.type === "nprofile") {
                 const { pubkey } = decoded.data;
                 return (
-                  <Link href={`/p/${nprofile}`}>
+                  <Link href={url}>
                     <Username as="span" pubkey={pubkey} />;
                   </Link>
                 );
@@ -114,7 +129,11 @@ function extractNprofiles(fragments: Fragment[]): Fragment[] {
     .flat();
 }
 
-function extractNpubs(fragments: Fragment[]): Fragment[] {
+function extractNpubs(
+  fragments: Fragment[],
+  links: Links,
+  Link: LinkComponent,
+): Fragment[] {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
@@ -122,11 +141,11 @@ function extractNpubs(fragments: Fragment[]): Fragment[] {
           if (i.startsWith("nostr:npub1")) {
             try {
               const raw = i.replace(NostrPrefixRegex, "");
-
               const decoded = nip19.decode(raw);
               if (decoded.type === "npub") {
+                const url = links.npub ? links.npub(raw) : `/${raw}`;
                 return (
-                  <Link href={`/p/${raw}`}>
+                  <Link href={url}>
                     <Username as="span" pubkey={decoded.data as string} />
                   </Link>
                 );
@@ -179,13 +198,19 @@ function extractNevents(fragments: Fragment[], components: Components) {
     .flat();
 }
 
-function extractHashtags(fragments: Fragment[]) {
+function extractHashtags(
+  fragments: Fragment[],
+  links: Links,
+  Link: LinkComponent,
+) {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
         return f.split(HashtagRegex).map((i) => {
           if (i.toLowerCase().startsWith("#")) {
-            return <Link href={`/t/${i.slice(1)}`}>{i}</Link>;
+            const tag = i.slice(1);
+            const url = links.t ? links.t(tag) : null;
+            return url ? <Link href={url}>{i}</Link> : i;
           } else {
             return i;
           }
@@ -199,11 +224,13 @@ function extractHashtags(fragments: Fragment[]) {
 function transformText(
   fragments: Fragment[],
   components: Components,
+  links: Links,
+  Link: LinkComponent,
 ): Fragment[] {
-  let result = extractNprofiles(fragments);
-  result = extractNpubs(result);
+  let result = extractNprofiles(fragments, links, Link);
+  result = extractNpubs(result, links, Link);
   result = extractNevents(result, components);
-  result = extractHashtags(result);
+  result = extractHashtags(result, links, Link);
   //fragments = extractNaddrs(fragments);
   //fragments = extractNoteIds(fragments);
 
@@ -220,16 +247,25 @@ export default function Markdown({
   components,
   ...rest
 }: MarkdownProps) {
+  const Link = useLinkComponent();
+  const links = useLinks();
   const markdownComponents = useMemo(() => {
     return {
       p({ children }: { children: string }) {
         return (
-          <p>{transformText([children], components ?? ({} as Components))}</p>
+          <p>
+            {transformText(
+              [children],
+              components ?? ({} as Components),
+              links,
+              Link,
+            )}
+          </p>
         );
       },
       a({ href, children, ...props }: { href: string; children: string }) {
         return (
-          <HyperText link={href || ""} {...props} isExternal>
+          <HyperText link={href || ""} {...props} Link={Link} isExternal>
             {children}
           </HyperText>
         );

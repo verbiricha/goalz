@@ -1,8 +1,18 @@
-import { useEffect, createContext, useContext } from "react";
-import { IntlProvider } from "react-intl";
-import { RouterProvider } from "react-router-dom";
+import {
+  useEffect,
+  createContext,
+  useContext,
+  ReactNode,
+  ReactElement,
+} from "react";
 import { useAtom } from "jotai";
-import { Theme, ChakraProvider, ColorModeScript } from "@chakra-ui/react";
+import {
+  Theme,
+  ChakraProvider,
+  ColorModeScript,
+  Link,
+  LinkProps,
+} from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import NDK, {
   NDKKind,
@@ -21,6 +31,20 @@ import useSession from "@ngine/hooks/useSession";
 
 const queryClient = new QueryClient();
 
+export type LinkComponent = (props: LinkProps) => ReactElement | null;
+
+export interface Links {
+  component?: LinkComponent;
+  npub?: (npub: string) => string;
+  nprofile?: (nprofile: string) => string;
+  nevent?: (nevent: string) => string;
+  naddr?: (naddr: string) => string;
+  //p?: (p: string) => string;
+  //e?: (e: string) => string;
+  //a?: (a: string) => string;
+  t?: (t: string) => string;
+}
+
 interface NgineContext {
   ndk: NDK;
   nip07Login: () => Promise<NDKUser | undefined>;
@@ -29,6 +53,7 @@ interface NgineContext {
     ev: Omit<NostrEvent, "pubkey">,
     signer?: NDKSigner,
   ) => Promise<NDKEvent>;
+  links: Links;
 }
 
 const NgineContext = createContext<NgineContext>({
@@ -42,22 +67,21 @@ const NgineContext = createContext<NgineContext>({
   sign: () => {
     return Promise.reject();
   },
+  links: {},
 });
 
 interface NgineProviderProps {
   ndk: NDK;
   theme: Theme;
-  router: any; // todo: type this
-  locale?: string;
+  links: Links;
+  children: ReactNode;
 }
-
-// todo: change locale. locale messages.
 
 export const NgineProvider = ({
   ndk,
-  router,
   theme,
-  locale = "en-US",
+  links,
+  children,
 }: NgineProviderProps) => {
   const [session, setSession] = useSession();
   const [, setRelays] = useAtom(relaysAtom);
@@ -144,19 +168,15 @@ export const NgineProvider = ({
   }
 
   return (
-    <NgineContext.Provider value={{ ndk, nip07Login, nsecLogin, sign }}>
-      <IntlProvider locale={locale}>
-        <ChakraProvider theme={theme}>
-          <QueryClientProvider client={queryClient}>
-            <>
-              <ColorModeScript
-                initialColorMode={theme.config.initialColorMode}
-              />
-              <RouterProvider router={router} />
-            </>
-          </QueryClientProvider>
-        </ChakraProvider>
-      </IntlProvider>
+    <NgineContext.Provider value={{ ndk, nip07Login, nsecLogin, sign, links }}>
+      <ChakraProvider theme={theme}>
+        <QueryClientProvider client={queryClient}>
+          <>
+            <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+            {children}
+          </>
+        </QueryClientProvider>
+      </ChakraProvider>
     </NgineContext.Provider>
   );
 };
@@ -191,4 +211,36 @@ export const useNDK = () => {
     throw new Error("Ngine context not found");
   }
   return context.ndk;
+};
+
+type LinkType = keyof Links;
+
+export const useLink = (type: LinkType, value: string): string => {
+  const context = useContext(NgineContext);
+  if (context === undefined) {
+    throw new Error("Ngine context not found");
+  }
+  if (context.links[type]) {
+    // @ts-ignore
+    return context.links[type](value);
+  }
+  return `/${value}`;
+};
+
+export const useLinks = (): Links => {
+  const context = useContext(NgineContext);
+  if (context === undefined) {
+    throw new Error("Ngine context not found");
+  }
+  return context.links;
+};
+
+export const useLinkComponent = (): ((
+  props: LinkProps,
+) => ReactElement | null) => {
+  const context = useContext(NgineContext);
+  if (context === undefined) {
+    throw new Error("Ngine context not found");
+  }
+  return context.links.component ?? Link;
 };

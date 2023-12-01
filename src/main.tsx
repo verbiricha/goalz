@@ -1,12 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter } from "react-router-dom";
+import { IntlProvider } from "react-intl";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NDK from "@nostr-dev-kit/ndk";
 import NDKCacheAdapterDexie from "@nostr-dev-kit/ndk-cache-dexie";
 
 import { NgineProvider } from "@ngine/context";
 import { DEFAULT_RELAYS } from "@ngine/const";
 
+import Link from "@goalz/components/Link";
 import theme from "./theme";
 import {
   HOME,
@@ -94,8 +96,23 @@ const router = createBrowserRouter([
   },
 ]);
 
+// todo: locale, messages
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <NgineProvider ndk={ndk} theme={theme} router={router}></NgineProvider>
+    <IntlProvider locale="en-US">
+      <NgineProvider
+        ndk={ndk}
+        theme={theme}
+        links={{
+          component: Link,
+          npub: (npub) => `/p/${npub}`,
+          nprofile: (nprofile) => `/p/${nprofile}`,
+          nevent: (nevent) => `/e/${nevent}`,
+          t: (tag) => `/t/${tag}`,
+        }}
+      >
+        <RouterProvider router={router} />
+      </NgineProvider>
+    </IntlProvider>
   </React.StrictMode>,
 );

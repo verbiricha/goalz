@@ -19,6 +19,7 @@ import {
   Input,
   Textarea,
   Button,
+  Link,
 } from "@chakra-ui/react";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { NDKKind, NDKEvent, NostrEvent } from "@nostr-dev-kit/ndk";
@@ -27,7 +28,6 @@ import { generatePrivateKey, getPublicKey } from "nostr-tools";
 import { useNDK, useNsecLogin } from "@ngine/context";
 import { relaysAtom, followsAtom } from "@ngine/state";
 import ImageUploader from "@ngine/components/ImageUploader";
-import Link from "@ngine/components/Link";
 import { unixNow } from "@ngine/time";
 import { DEFAULT_RELAYS } from "@ngine/const";
 

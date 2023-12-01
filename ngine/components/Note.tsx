@@ -13,8 +13,8 @@ import User from "@ngine/components/User";
 import EventMenu from "@ngine/components/EventMenu";
 import Markdown from "@ngine/components/Markdown";
 import Reactions from "@ngine/components/Reactions";
-import { formatRelativeTime } from "@ngine/format";
 import { Components } from "@ngine/types";
+import { formatRelativeTime } from "@ngine/format";
 
 interface NoteProps extends CardProps {
   event: NDKEvent;

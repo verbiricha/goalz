@@ -9,10 +9,10 @@ import {
   Divider,
 } from "@chakra-ui/react";
 
-import Link from "@ngine/components/Link";
-import { useExtensionLogin } from "@ngine/context";
-
+import Link from "@goalz/components/Link";
 import { ONBOARDING } from "@goalz/routes";
+
+import { useExtensionLogin } from "@ngine/context";
 
 interface LoginDialogProps {
   onLogin?: () => void;

@@ -8,12 +8,12 @@ import FeaturedGoals from "@goalz/components/FeaturedGoals";
 import Features from "@goalz/components/Features";
 import Support from "@goalz/components/Support";
 import Notes from "@goalz/components/Notes";
+import Link from "@goalz/components/Link";
 import useSupporters from "@goalz/hooks/useSupporters";
 import { NEW_GOAL } from "@goalz/routes";
 import { GOAL, HEYA_PUBKEY } from "@goalz/const";
 import { dedupeByPubkey } from "@goalz/utils";
 
-import Link from "@ngine/components/Link";
 import useEvents from "@ngine/nostr/useEvents";
 import useSession from "@ngine/hooks/useSession";
 

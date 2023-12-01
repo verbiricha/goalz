@@ -1,6 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 
-import Link from "@ngine/components/Link";
+import Link from "@goalz/components/Link";
 
 const fontSize = "xs";
 

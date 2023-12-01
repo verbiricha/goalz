@@ -18,6 +18,7 @@ interface EventMenuProps {
 export default function EventMenu({ event }: EventMenuProps) {
   const toast = useToast();
   const copy = useCopy();
+
   function copyId() {
     copy(`nostr:${event.encode()}`);
     toast({
@@ -28,6 +29,7 @@ export default function EventMenu({ event }: EventMenuProps) {
       duration: 1500,
     });
   }
+
   return (
     <Menu>
       <MenuButton>

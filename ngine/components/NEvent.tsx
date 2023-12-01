@@ -1,6 +1,6 @@
-import { useMemo, createElement } from "react";
-import { Flex } from "@chakra-ui/react";
+import { Flex, Spinner } from "@chakra-ui/react";
 
+import Event from "@ngine/components/Event";
 import { Components } from "@ngine/types";
 import useEvent from "@ngine/nostr/useEvent";
 
@@ -17,18 +17,11 @@ export default function NEvent({ id, relays, components }: NEventProps) {
     },
     relays,
   );
-  const component = useMemo(() => {
-    // @ts-ignore
-    if (event?.kind && components[event.kind]) {
-      const element = components[event.kind];
-      return (
-        <Flex key={event.id} my={3} justify="center">
-          {/* @ts-ignore */}
-          {createElement(element, { event })}
-        </Flex>
-      );
-    }
-    return null;
-  }, [event, components]);
-  return component;
+  return event ? (
+    <Flex key={event.id} my={3} justify="center">
+      <Event event={event} components={components} />
+    </Flex>
+  ) : (
+    <Spinner />
+  );
 }

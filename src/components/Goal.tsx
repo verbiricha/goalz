@@ -29,8 +29,8 @@ import { useAtomValue } from "jotai";
 import { Image as ImageIcon } from "@ngine/icons";
 import User from "@ngine/components/User";
 import Avatar from "@ngine/components/Avatar";
+import Event from "@ngine/components/Event";
 import Markdown from "@ngine/components/Markdown";
-import Link from "@ngine/components/Link";
 import useEvent from "@ngine/nostr/useEvent";
 import useEvents from "@ngine/nostr/useEvents";
 import useProfile from "@ngine/nostr/useProfile";
@@ -44,8 +44,10 @@ import { DEFAULT_RELAYS } from "@ngine/const";
 import ZapButton from "@ngine/components/ZapButton";
 import { formatSatAmount, formatRelativeTime } from "@ngine/format";
 
+import Link from "@goalz/components/Link";
 import { currencyAtom, ratesAtom } from "@goalz/state";
 import ExternalLink from "@goalz/components/ExternalLink";
+import { GOAL } from "@goalz/const";
 
 function useCurrencySettings() {
   const currency = useAtomValue(currencyAtom);
@@ -643,7 +645,16 @@ export function Goal({ id, author, relays }: GoalProps) {
     },
     relays,
   );
-  return event ? <GoalDetail event={event} /> : <Spinner />;
+
+  if (!event) {
+    return <Spinner />;
+  }
+
+  if (event.kind === GOAL) {
+    return <GoalDetail event={event} />;
+  } else {
+    return <Event event={event} />;
+  }
 }
 
 function getRandomValueMappedTo100() {

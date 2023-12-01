@@ -1,7 +1,7 @@
 import { Text } from "@chakra-ui/react";
 import type { TextProps } from "@chakra-ui/react";
 
-import useProfile from "../nostr/useProfile";
+import useProfile from "@ngine/nostr/useProfile";
 
 function shortenPubkey(pk: string) {
   return `${pk.slice(0, 8)}:${pk.slice(-8)}`;
