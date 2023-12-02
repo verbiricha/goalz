@@ -2,9 +2,9 @@ import { useMemo } from "react";
 import { NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
 
 import { SUPPORT } from "@goalz/const";
-import { dedupeByPubkey } from "@goalz/utils";
 
 import useEvents from "@ngine/nostr/useEvents";
+import { dedupeByPubkey } from "@ngine/utils";
 
 export default function useSupporters(pubkey: string) {
   const { events, eose } = useEvents(

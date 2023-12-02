@@ -1,4 +1,4 @@
-import { Flex, Spinner } from "@chakra-ui/react";
+import { Flex, Box, Skeleton } from "@chakra-ui/react";
 
 import Event from "@ngine/components/Event";
 import { Components } from "@ngine/types";
@@ -18,10 +18,12 @@ export default function NEvent({ id, relays, components }: NEventProps) {
     relays,
   );
   return event ? (
-    <Flex key={event.id} my={3} justify="center">
+    <Flex my={3} justify="center">
       <Event event={event} components={components} />
     </Flex>
   ) : (
-    <Spinner />
+    <Box my={3}>
+      <Skeleton height="21px" />
+    </Box>
   );
 }

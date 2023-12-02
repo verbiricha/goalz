@@ -63,7 +63,7 @@ export default function useEvents(
         sub.stop();
       };
     }
-  }, [id]);
+  }, [id, opts?.disable]);
 
   return { id, eose, events };
 }

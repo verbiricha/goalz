@@ -9,7 +9,7 @@ import {
 
 import { useNDK } from "@ngine/context";
 
-export default function useEvents(filter: NDKFilter, relays?: string[]) {
+export default function useEvent(filter: NDKFilter, relays?: string[]) {
   const ndk = useNDK();
   const [event, setEvent] = useState<NDKEvent | null>(null);
 
@@ -21,6 +21,7 @@ export default function useEvents(filter: NDKFilter, relays?: string[]) {
       .fetchEvent(
         filter,
         {
+          groupable: true,
           cacheUsage: NDKSubscriptionCacheUsage.CACHE_FIRST,
         },
         relaySet,

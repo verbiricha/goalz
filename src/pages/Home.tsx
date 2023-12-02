@@ -12,10 +12,10 @@ import Link from "@goalz/components/Link";
 import useSupporters from "@goalz/hooks/useSupporters";
 import { NEW_GOAL } from "@goalz/routes";
 import { GOAL, HEYA_PUBKEY } from "@goalz/const";
-import { dedupeByPubkey } from "@goalz/utils";
 
 import useEvents from "@ngine/nostr/useEvents";
 import useSession from "@ngine/hooks/useSession";
+import { dedupeByPubkey } from "@ngine/utils";
 
 export default function Home() {
   const navigate = useNavigate();

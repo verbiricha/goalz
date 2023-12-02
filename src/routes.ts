@@ -6,3 +6,4 @@ export const ALL = "/all";
 export const ONBOARDING = "/onboarding";
 export const SUPPORT = "/support";
 export const HASHTAG = "/t/:tag";
+export const RANKING = "/ranking";

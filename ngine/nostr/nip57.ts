@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { decode } from "light-bolt11-decoder";
 import { NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKEvent, NostrEvent } from "@nostr-dev-kit/ndk";
@@ -66,6 +67,9 @@ export function getZapAmount(zap: NDKEvent): number {
 export interface ZapRequest extends NostrEvent {
   created_at: number;
   amount: number;
+  e?: string;
+  p?: string;
+  relays: string[];
 }
 
 export interface ZapsSummary {
@@ -76,7 +80,19 @@ export interface ZapsSummary {
 export function zapsSummary(zaps: NDKEvent[]): ZapsSummary {
   const zapRequests = zaps
     .map((z) => {
-      return { ...getZapRequest(z), amount: getZapAmount(z) } as ZapRequest;
+      const zr = getZapRequest(z);
+      const eTag = zr ? zr.tags.find((t) => t[0] === "e") : null;
+      const e = eTag ? eTag[1] : undefined;
+      const pTag = zr ? zr.tags.find((t) => t[0] === "p") : null;
+      const p = pTag ? pTag[1] : undefined;
+      const relaysTag = zr ? zr.tags.find((t) => t[0] === "relays") || [] : [];
+      return {
+        ...getZapRequest(z),
+        amount: getZapAmount(z),
+        e,
+        p,
+        relays: relaysTag.slice(1),
+      } as ZapRequest;
     })
     .sort((a, b) => b.amount - a.amount);
   const total = zapRequests.reduce((acc, { amount }) => {
@@ -104,4 +120,42 @@ export function zapTagsToSplits(zapTags: string[][]): ZapSplit[] {
     const percentage = (Number(weight) / totalWeight) * 100;
     return { pubkey, percentage };
   });
+}
+
+interface Rank {
+  pubkey: string;
+  amount: number;
+}
+
+export function useRanking(zaps: NDKEvent[]): Rank[] {
+  const { zapRequests } = useMemo(() => zapsSummary(zaps), [zaps]);
+
+  const byAmount = useMemo(() => {
+    return zapRequests.reduce(
+      (result, element) => {
+        const pubkey = element.pubkey;
+
+        if (!result[pubkey]) {
+          result[pubkey] = 0;
+        }
+
+        result[pubkey] += element.amount;
+
+        return result;
+      },
+      {} as Record<string, number>,
+    );
+  }, [zapRequests]);
+
+  const ranking = useMemo(() => {
+    return Object.entries(byAmount)
+      .sort((a, b) => {
+        return b[1] - a[1];
+      })
+      .map((e) => {
+        return { pubkey: e[0], amount: e[1] };
+      });
+  }, [byAmount]);
+
+  return ranking;
 }

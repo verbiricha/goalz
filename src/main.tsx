@@ -19,6 +19,7 @@ import {
   ONBOARDING,
   SUPPORT,
   HASHTAG,
+  RANKING,
 } from "./routes";
 import Main from "./layouts/Main";
 import LoggedIn from "./layouts/LoggedIn";
@@ -30,14 +31,15 @@ import All from "./pages/All";
 import Onboarding from "./pages/Onboarding";
 import Support from "./pages/Support";
 import Hashtag from "./pages/Hashtag";
+import Ranking from "./pages/Ranking";
 
 // NDK Instance
-const dexieAdapter = new NDKCacheAdapterDexie({ dbName: "goalz" });
+const cacheAdapter = new NDKCacheAdapterDexie({ dbName: "goalz" });
 const ndk = new NDK({
   explicitRelayUrls: DEFAULT_RELAYS,
   outboxRelayUrls: ["wss://relay.snort.social", "wss://purplepag.es"],
   enableOutboxModel: true,
-  cacheAdapter: dexieAdapter,
+  cacheAdapter,
 });
 
 // Router
@@ -54,6 +56,10 @@ const router = createBrowserRouter([
       {
         path: HOME,
         element: <Home />,
+      },
+      {
+        path: RANKING,
+        element: <Ranking />,
       },
       {
         path: ONBOARDING,

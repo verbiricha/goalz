@@ -5,7 +5,7 @@ import {
   useColorModeValue,
   Flex,
   Box,
-  Spinner,
+  Skeleton,
   Card,
   CardBody,
   CardFooter,
@@ -45,6 +45,7 @@ import ZapButton from "@ngine/components/ZapButton";
 import Amount from "@ngine/components/Amount";
 import FormattedRelativeTime from "@ngine/components/FormattedRelativeTime";
 import { currencyAtom } from "@ngine/state";
+import { useLinkComponent, useLink } from "@ngine/context";
 
 import Link from "@goalz/components/Link";
 import ExternalLink from "@goalz/components/ExternalLink";
@@ -637,7 +638,7 @@ export function Goal({ id, author, relays }: GoalProps) {
   );
 
   if (!event) {
-    return <Spinner />;
+    return <Skeleton />;
   }
 
   if (event.kind === GOAL) {
@@ -699,5 +700,21 @@ export function GoalBubble({ event }: { event: NDKEvent }) {
         borderColor="chakra-body-bg"
       />
     </Box>
+  );
+}
+
+export function GoalSummary({ event }: { event: NDKEvent }) {
+  const { title } = useGoalInfo(event);
+  const Link = useLinkComponent();
+  const url = useLink("nevent", event.encode());
+  return (
+    <Stack>
+      <Link href={url}>
+        <Heading fontSize="md" color="chakra-body-text">
+          {title}
+        </Heading>
+      </Link>
+      <User pubkey={event.pubkey} size="xs" fontSize="sm" />
+    </Stack>
   );
 }

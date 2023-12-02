@@ -114,6 +114,7 @@ function CreateGoal() {
   const sign = useSign();
   const navigate = useNavigate();
   const fiatCurrency = useAtomValue(fiatCurrencyAtom);
+  // todo: fixme
   const rates = useAtomValue(ratesAtom);
   // Goal settings
   const [name, setName] = useState("");

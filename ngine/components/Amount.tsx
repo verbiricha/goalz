@@ -1,6 +1,6 @@
 import { useAtomValue } from "jotai";
 
-import { ratesAtom } from "@ngine/state";
+import { ratesAtom, currencyAtom } from "@ngine/state";
 import { formatSatAmount } from "@ngine/format";
 import type { Currency } from "@ngine/money";
 
@@ -9,18 +9,10 @@ interface SatAmountProps {
   currency?: Currency;
 }
 
-export default function SatAmount({
-  amount,
-  currency = "BTC",
-}: SatAmountProps) {
+export default function SatAmount({ amount, currency }: SatAmountProps) {
+  const defaultCurrency = useAtomValue(currencyAtom);
   const rates = useAtomValue(ratesAtom);
   return (
-    <>
-      {formatSatAmount(
-        amount,
-        currency,
-        rates?.currency === currency ? rates : undefined,
-      )}
-    </>
+    <>{formatSatAmount(amount, currency ? currency : defaultCurrency, rates)}</>
   );
 }

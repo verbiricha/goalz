@@ -36,11 +36,11 @@ dependencies:
     specifier: ^1.3.2
     version: 1.3.2
   '@nostr-dev-kit/ndk':
-    specifier: ^2.0.3
-    version: 2.0.3(typescript@5.0.2)
+    specifier: ^2.2.0
+    version: 2.2.0(typescript@5.0.2)
   '@nostr-dev-kit/ndk-cache-dexie':
-    specifier: ^2.0.3
-    version: 2.0.3(typescript@5.0.2)
+    specifier: ^2.2.0
+    version: 2.2.0(typescript@5.0.2)
   '@scure/base':
     specifier: ^1.1.3
     version: 1.1.3
@@ -103,9 +103,6 @@ dependencies:
     version: link:@noble/hashes/sha256
 
 devDependencies:
-  '@formatjs/cli':
-    specifier: ^6.2.4
-    version: 6.2.4
   '@types/react':
     specifier: ^18.2.15
     version: 18.2.15
@@ -1831,17 +1828,6 @@ packages:
     resolution: {integrity: sha512-DQzD4zkwJkKU4pkhnRtLjFOWRJZA3wFrGZJ0bhGClm2Jq1zm3Py6HuCf8W3ynEdAvoYMvvafPhmjUgbbHbEhwA==}
     dev: false
 
-  /@formatjs/cli@6.2.4:
-    resolution: {integrity: sha512-g1o9O143F5TGB55skib3fKbyjifPa9YoDcX9L07hVJocRKngCcu4JhKViyUSN55KGcN2ttfBomM+wihN6wtBSQ==}
-    engines: {node: '>= 16'}
-    hasBin: true
-    peerDependencies:
-      vue: ^3.3.4
-    peerDependenciesMeta:
-      vue:
-        optional: true
-    dev: true
-
   /@formatjs/ecma402-abstract@1.17.2:
     resolution: {integrity: sha512-k2mTh0m+IV1HRdU0xXM617tSQTi53tVR2muvYOsBeYcUgEAyxV1FOC7Qj279th3fBVQ+Dj6muvNJZcHSPNdbKg==}
     dependencies:
@@ -2054,10 +2040,10 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
 
-  /@nostr-dev-kit/ndk-cache-dexie@2.0.3(typescript@5.0.2):
-    resolution: {integrity: sha512-+hSskmdo6GNp/wghCG1WRnm0HGipoJSRCOPeGHSRoUnwUpXlA9NobAjI5XOakrBGKhkWOQpsUgumHGADUX8oAQ==}
+  /@nostr-dev-kit/ndk-cache-dexie@2.2.0(typescript@5.0.2):
+    resolution: {integrity: sha512-ut5EARz7yr4axSpQcNHq8Rbut8iLlJQAZ+vvlZHWbu+z5Ecg15VPJ0ihT3OqK++8yKSPlJVi3JjC6wuogcBiEg==}
     dependencies:
-      '@nostr-dev-kit/ndk': 2.0.3(typescript@5.0.2)
+      '@nostr-dev-kit/ndk': 2.2.0(typescript@5.0.2)
       debug: 4.3.4
       dexie: 3.2.4
       nostr-tools: 1.16.0(typescript@5.0.2)
@@ -2067,17 +2053,17 @@ packages:
       - typescript
     dev: false
 
-  /@nostr-dev-kit/ndk@2.0.3(typescript@5.0.2):
-    resolution: {integrity: sha512-rKIJBIU0dZHaXwj1TY18VSLYsoIe1aQ7TAxkH3WFx3lGTXCz+nlGh5bsyvgMBdbyb0iecdjsaKqBRpEWMzYC9g==}
+  /@nostr-dev-kit/ndk@2.2.0(typescript@5.0.2):
+    resolution: {integrity: sha512-NdnErX8em9Y/qC4CVYTHYE0bvtLV2ZQh56+JOiarjeJd+J7ZdJX1P10ba463iEOodppvKZqFlYbuDU6CprehUA==}
     dependencies:
       '@noble/hashes': 1.3.2
       '@noble/secp256k1': 2.0.0
       '@scure/base': 1.1.3
       debug: 4.3.4
-      eventemitter3: 5.0.1
       light-bolt11-decoder: 3.0.0
       node-fetch: 3.3.2
       nostr-tools: 1.16.0(typescript@5.0.2)
+      tseep: 1.1.3
       typescript-lru-cache: 2.0.0
       utf8-buffer: 1.0.0
       websocket-polyfill: 0.0.3
@@ -3091,10 +3077,6 @@ packages:
   /esutils@2.0.3:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
     engines: {node: '>=0.10.0'}
-
-  /eventemitter3@5.0.1:
-    resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
-    dev: false
 
   /events@3.3.0:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
@@ -4941,6 +4923,10 @@ packages:
     dependencies:
       typescript: 5.0.2
     dev: true
+
+  /tseep@1.1.3:
+    resolution: {integrity: sha512-deBIcIlXUMlr3xaN0UEochqjU/zXGaZGPqHPd1rxo4w6DklBdRM6WQQtsk7bekIF+qY6QTeen3nE6OA7BxL9rg==}
+    dev: false
 
   /tslib@2.4.0:
     resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}

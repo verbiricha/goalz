@@ -31,7 +31,7 @@ export default function User({ pubkey, ...rest }: UserProps) {
           fontSize={rest.fontSize}
           fontWeight={rest.fontWeight}
         >
-          {profile?.name || shortenPubkey(pubkey)}
+          {profile?.display_name || profile?.name || shortenPubkey(pubkey)}
         </Text>
       </HStack>
     </Link>

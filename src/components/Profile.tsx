@@ -13,14 +13,7 @@ import {
   TabPanels,
   Tab,
   TabPanel,
-  //Card,
-  //CardBody,
-  //Stat,
-  //StatLabel,
-  //StatNumber,
-  //StatGroup,
 } from "@chakra-ui/react";
-//import { NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKEvent } from "@nostr-dev-kit/ndk";
 
 import User from "@ngine/components/User";
@@ -170,7 +163,11 @@ function Goals({ events }: GoalsProps) {
   );
 }
 
-function ProfileTabs({ events }: GoalsProps) {
+interface ProfileTabsProps {
+  events: NDKEvent[];
+}
+
+function ProfileTabs({ events }: ProfileTabsProps) {
   return (
     <Tabs variant="soft-rounded" colorScheme="gray" size="sm" mt={2}>
       <TabList>
@@ -194,11 +191,6 @@ export default function Profile({ pubkey }: ProfileProps) {
     kinds: [GOAL],
     authors: [pubkey],
   });
-  //const { events: zaps } = useEvents({
-  //  kinds: [NDKKind.Zap],
-  //  "#p": [pubkey],
-  //});
-  //console.log("z", zaps);
   return (
     <Stack w="100%" gap={3}>
       <Flex align="center" justify="space-between">
@@ -216,34 +208,6 @@ export default function Profile({ pubkey }: ProfileProps) {
       )}
       <NPub pubkey={pubkey} />
       {shouldShowNsec && session?.privkey && <NSec privkey={session.privkey} />}
-      {/*
-      <Card variant="elevated">
-        <CardBody>
-          <StatGroup>
-            <Stat align="center">
-              <StatNumber fontSize="3xl" fontWeight={700}>
-                {events.length}
-              </StatNumber>
-              <StatLabel>Funded goals</StatLabel>
-            </Stat>
-
-            <Stat align="center">
-              <StatNumber fontSize="3xl" fontWeight={700}>
-                {events.length}
-              </StatNumber>
-              <StatLabel>Zapped</StatLabel>
-            </Stat>
-
-            <Stat align="center">
-              <StatNumber fontSize="3xl" fontWeight={700}>
-                {events.length}
-              </StatNumber>
-              <StatLabel>Supporter rank</StatLabel>
-            </Stat>
-          </StatGroup>
-        </CardBody>
-      </Card>
-	    */}
 
       <ProfileTabs events={events} />
     </Stack>

@@ -23,9 +23,11 @@ import useSession from "@ngine/hooks/useSession";
 import { ChevronDown } from "@ngine/icons";
 import { User, Target, Users, Close } from "@ngine/icons";
 
+import Trophy from "@goalz/icons/Trophy";
 import LoginDialog from "@goalz/components/LoginDialog";
 import CurrencySwitch from "./CurrencySwitch";
 import ColorModeSwitch from "./ColorModeSwitch";
+import { NEW_GOAL, ALL, RANKING } from "@goalz/routes";
 
 interface UserMenuProps {
   pubkey: string;
@@ -57,11 +59,17 @@ function UserMenu({ pubkey }: UserMenuProps) {
         >
           Profile
         </MenuItem>
-        <MenuItem icon={<Icon as={Target} />} onClick={() => navigate(`/new`)}>
+        <MenuItem
+          icon={<Icon as={Target} />}
+          onClick={() => navigate(NEW_GOAL)}
+        >
           New goal
         </MenuItem>
-        <MenuItem icon={<Icon as={Users} />} onClick={() => navigate(`/all`)}>
+        <MenuItem icon={<Icon as={Users} />} onClick={() => navigate(ALL)}>
           Contacts
+        </MenuItem>
+        <MenuItem icon={<Icon as={Trophy} />} onClick={() => navigate(RANKING)}>
+          Ranking
         </MenuItem>
         <MenuDivider />
         <MenuGroup title="Settings">
