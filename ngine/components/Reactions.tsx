@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import {
+  useColorModeValue,
   useDisclosure,
   As,
   Flex,
@@ -40,9 +41,10 @@ function ReactionCount({
   hasReacted,
   ...rest
 }: ReactionCountProps) {
+  const highlighted = useColorModeValue("brand.500", "brand.100");
   return (
     <Flex align="center" gap={2} direction="row" {...rest}>
-      <Icon as={icon} color={hasReacted ? "brand.500" : "currentColor"} />
+      <Icon as={icon} color={hasReacted ? highlighted : "currentColor"} />
       <Text>{count}</Text>
     </Flex>
   );
@@ -92,7 +94,7 @@ export default function Reactions({
   const [session] = useSession();
   const pubkey = session?.pubkey;
   const { zaps, reactions, replies, reposts } = useReactions(event, kinds);
-  const { total } = useMemo(() => {
+  const { zapRequests, total } = useMemo(() => {
     return zapsSummary(zaps);
   }, [zaps]);
 
@@ -113,7 +115,9 @@ export default function Reactions({
               <ReactionCount
                 icon={Zap}
                 count={total}
-                hasReacted={Boolean(zaps.find((r) => r.pubkey === pubkey))}
+                hasReacted={Boolean(
+                  zapRequests.find((r) => r.pubkey === pubkey),
+                )}
                 onClick={zapModal.onOpen}
                 cursor="pointer"
               />

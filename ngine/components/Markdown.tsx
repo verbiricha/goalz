@@ -277,7 +277,19 @@ export default function Markdown({
       <ReactMarkdown
         // @ts-ignore
         components={markdownComponents}
-        allowedElements={["p", "a"]}
+        allowedElements={[
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6",
+          "p",
+          "a",
+          "ol",
+          "ul",
+          "li",
+        ]}
         skipHtml={true}
         remarkPlugins={[remarkGfm]}
       >

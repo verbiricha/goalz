@@ -202,7 +202,12 @@ export default function Profile({ pubkey }: ProfileProps) {
   return (
     <Stack w="100%" gap={3}>
       <Flex align="center" justify="space-between">
-        <User pubkey={pubkey} size="lg" fontSize="3xl" fontWeight={700} />
+        <User
+          pubkey={pubkey}
+          size={{ base: "sm", md: "lg" }}
+          fontSize={{ base: "xl", md: "3xl" }}
+          fontWeight={700}
+        />
         <FollowButton variant="outline" pubkey={pubkey} />
       </Flex>
       {profile?.about && <Markdown content={profile.about} />}
