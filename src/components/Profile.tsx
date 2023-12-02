@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { nip19 } from "nostr-tools";
-import { useAtomValue } from "jotai";
 import {
   useDisclosure,
   useToast,
@@ -34,7 +33,6 @@ import useSession from "@ngine/hooks/useSession";
 import { Zap, User as UserIcon, Copy, Key } from "@ngine/icons";
 import ZapModal from "@ngine/components/ZapModal";
 
-import { currencyAtom, ratesAtom } from "@goalz/state";
 import { GOAL } from "@goalz/const";
 import { GoalCard } from "@goalz/components/Goal";
 
@@ -147,20 +145,13 @@ interface LightningAddressProps {
 
 function LightningAddress({ pubkey, address }: LightningAddressProps) {
   const modalProps = useDisclosure();
-  const currency = useAtomValue(currencyAtom);
-  const rates = useAtomValue(ratesAtom);
   return (
     <>
       <HStack cursor="pointer" onClick={modalProps.onOpen}>
         <Icon as={Zap} opacity="0.3" boxSize={4} color="gray.500" />
         <Text>{address}</Text>
       </HStack>
-      <ZapModal
-        pubkey={pubkey}
-        currency={currency}
-        rates={rates}
-        {...modalProps}
-      />
+      <ZapModal pubkey={pubkey} {...modalProps} />
     </>
   );
 }

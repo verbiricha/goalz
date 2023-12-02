@@ -13,8 +13,8 @@ import User from "@ngine/components/User";
 import EventMenu from "@ngine/components/EventMenu";
 import Markdown from "@ngine/components/Markdown";
 import Reactions from "@ngine/components/Reactions";
+import FormattedRelativeTime from "@ngine/components/FormattedRelativeTime";
 import { Components } from "@ngine/types";
-import { formatRelativeTime } from "@ngine/format";
 
 interface NoteProps extends CardProps {
   event: NDKEvent;
@@ -28,7 +28,7 @@ export default function Note({ event, components, ...rest }: NoteProps) {
         <HStack align="center" justify="space-between">
           <User pubkey={event.pubkey} />
           <Text color="gray.400" fontSize="sm">
-            {formatRelativeTime(event.created_at ?? 0)}
+            <FormattedRelativeTime timestamp={event.created_at ?? 0} />
           </Text>
         </HStack>
       </CardHeader>

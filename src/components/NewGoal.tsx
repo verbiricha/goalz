@@ -29,10 +29,11 @@ import useRelays from "@ngine/hooks/useRelays";
 import { useSign } from "@ngine/context";
 import ImageUploader from "@ngine/components/ImageUploader";
 import { convertSatsToFiat, convertFiatToSats } from "@ngine/money";
+import { ratesAtom } from "@ngine/state";
 
 import { GoalPreview, Shares } from "@goalz/components/Goal";
 import { GOAL } from "@goalz/const";
-import { ratesAtom, fiatCurrencyAtom } from "@goalz/state";
+import { fiatCurrencyAtom } from "@goalz/state";
 
 function getMinimumDate() {
   var currentDate = new Date();
@@ -46,7 +47,7 @@ interface TagsProps {
 }
 
 function TagsFormControl({ onChange }: TagsProps) {
-  const [tags, setTags] = useState<string[]>(["bitcoin"]);
+  const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState("");
 
   function addTag(t: string) {

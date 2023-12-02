@@ -4,22 +4,13 @@ import type { NDKEvent } from "@nostr-dev-kit/ndk";
 
 import { ZapCircle } from "@ngine/icons";
 import ZapModal from "@ngine/components/ZapModal";
-import type { Currency, Rates } from "@ngine/money";
 
 interface ZapButtonProps extends ButtonProps {
   pubkey: string;
   event?: NDKEvent;
-  currency: Currency;
-  rates?: Rates;
 }
 
-export default function ZapButton({
-  pubkey,
-  event,
-  currency,
-  rates,
-  ...rest
-}: ZapButtonProps) {
+export default function ZapButton({ pubkey, event, ...rest }: ZapButtonProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
@@ -37,8 +28,6 @@ export default function ZapButton({
         event={event}
         isOpen={isOpen}
         onClose={onClose}
-        currency={currency}
-        rates={rates}
       />
     </>
   );

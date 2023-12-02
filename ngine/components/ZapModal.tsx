@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useAtomValue } from "jotai";
 import {
   useToast,
   Flex,
@@ -36,6 +37,7 @@ import("@getalby/bitcoin-connect-react"); // enable NWC
 import { makeZapRequest, getZapSplits, ZapSplit } from "@ngine/nostr/nip57";
 import User from "@ngine/components/User";
 import QrCode from "@ngine/components/QrCode";
+import Amount from "@ngine/components/Amount";
 import InputCopy from "@ngine/components/InputCopy";
 import useRelays from "@ngine/hooks/useRelays";
 import useSession from "@ngine/hooks/useSession";
@@ -45,7 +47,7 @@ import { useLnurl, useLnurls, loadInvoice } from "@ngine/lnurl";
 import { useSign } from "@ngine/context";
 import { convertSatsToFiat } from "@ngine/money";
 import type { Currency, Rates } from "@ngine/money";
-import { formatSatAmount } from "@ngine/format";
+import { currencyAtom, ratesAtom } from "@ngine/state";
 
 function valueToEmoji(sats: number) {
   if (sats < 420) {
@@ -147,7 +149,7 @@ function SatSlider({
                   {valueToEmoji(a)}
                 </Text>
                 <Text as="span" fontWeight={700}>
-                  {formatSatAmount(a, "BTC")}
+                  <Amount amount={a} currency="BTC" />
                 </Text>
                 {rates && (
                   <Text as="span" fontSize="sm">
@@ -404,7 +406,7 @@ function SingleZapModal({
             colorScheme="brand"
             onClick={onZap}
           >
-            Zap {formatSatAmount(amount, currency, rates)}
+            Zap <Amount amount={amount} currency={currency} />
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -625,7 +627,7 @@ function MultiZapModal({
                         {Number(percentage.toFixed(0))}%
                       </Text>
                       <Text color="secondary" as="span" fontSize="sm">
-                        {formatSatAmount(gets, currency, rates)}
+                        <Amount amount={gets} currency={currency} />
                       </Text>
                     </Flex>
                   </Flex>
@@ -666,7 +668,7 @@ function MultiZapModal({
             colorScheme="brand"
             onClick={onZap}
           >
-            Zap {formatSatAmount(amount, currency, rates)}
+            Zap <Amount amount={amount} currency={currency} />
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -674,14 +676,21 @@ function MultiZapModal({
   );
 }
 
+interface OptionalZapModalProps {
+  pubkey: string;
+  event?: NDKEvent;
+  isOpen: boolean;
+  onClose(): void;
+}
+
 export default function ZapModal({
   pubkey,
   event,
   isOpen,
   onClose,
-  currency,
-  rates,
-}: ZapModalProps) {
+}: OptionalZapModalProps) {
+  const currency = useAtomValue(currencyAtom);
+  const rates = useAtomValue(ratesAtom);
   const zapSplits = useMemo(() => {
     if (event) {
       return getZapSplits(event);

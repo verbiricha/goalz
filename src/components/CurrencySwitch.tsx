@@ -1,10 +1,9 @@
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { HStack, Switch, Text } from "@chakra-ui/react";
 
-import { currencyAtom, ratesAtom } from "@goalz/state";
+import { currencyAtom } from "@ngine/state";
 
 export default function CurrencySwitch() {
-  const currentRates = useAtomValue(ratesAtom);
   const [currency, setCurrency] = useAtom(currencyAtom);
   const isUSD = currency === "USD";
 
@@ -21,7 +20,6 @@ export default function CurrencySwitch() {
     <HStack align="center" justify="space-between" w="100%">
       <Switch
         colorScheme="brand"
-        isDisabled={!currentRates}
         onChange={changeCurrency}
         isChecked={isUSD}
         size="sm"

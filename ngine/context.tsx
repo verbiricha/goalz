@@ -25,9 +25,10 @@ import NDK, {
 } from "@nostr-dev-kit/ndk";
 import { generatePrivateKey, getPublicKey } from "nostr-tools";
 
-import { relaysAtom, followsAtom } from "@ngine/state";
+import { relaysAtom, latestRatesAtom, followsAtom } from "@ngine/state";
 import { DEFAULT_RELAYS } from "@ngine/const";
 import useSession from "@ngine/hooks/useSession";
+import useRates from "@ngine/nostr/useRates";
 
 const queryClient = new QueryClient();
 
@@ -86,6 +87,12 @@ export const NgineProvider = ({
   const [session, setSession] = useSession();
   const [, setRelays] = useAtom(relaysAtom);
   const [contacts, setContacts] = useAtom(followsAtom);
+  const rates = useRates();
+  const [, setLatestRates] = useAtom(latestRatesAtom);
+
+  useEffect(() => {
+    setLatestRates(rates);
+  }, [rates]);
 
   async function nip07Login() {
     const signer = new NDKNip07Signer();

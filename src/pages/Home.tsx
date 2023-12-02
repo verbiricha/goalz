@@ -7,7 +7,7 @@ import OrbitingGoals from "@goalz/components/OrbitingGoals";
 import FeaturedGoals from "@goalz/components/FeaturedGoals";
 import Features from "@goalz/components/Features";
 import Support from "@goalz/components/Support";
-import Notes from "@goalz/components/Notes";
+import FeaturedNotes from "@goalz/components/FeaturedNotes";
 import Link from "@goalz/components/Link";
 import useSupporters from "@goalz/hooks/useSupporters";
 import { NEW_GOAL } from "@goalz/routes";
@@ -71,18 +71,13 @@ export default function Home() {
       />
       <Features />
       <Support />
+      <FeaturedNotes />
       <CallToAction
         label="Your dreams await"
         title="Get the boost you need. Start a goal for yourself or someone you know."
         description="Heya! is an open source project powered by bitcoin, lightning and the nostr protocol and made possible by the folks at OpenSats."
         ctaText="Create a goal"
         ctaAction={createZapGoal}
-      />
-      <Notes
-        ids={[
-          "ee5bd8c438291b1d803225a691ffd61e96cda41d492eea7d8b03190a8c9144a6",
-          "b0e513cfbafa8bf14fe7ad47a27436cee43ace712d50b1568077f451b7c3545c",
-        ]}
       />
     </Stack>
   );

@@ -7,14 +7,14 @@ import Note from "@ngine/components/Note";
 import { GOAL } from "@goalz/const";
 import { GoalCard } from "@goalz/components/Goal";
 
-interface NotesProps {
-  ids: string[];
-}
-
-export default function Notes({ ids }: NotesProps) {
+export default function FeaturedNotes() {
   const { events } = useEvents(
     {
-      ids,
+      ids: [
+        "ee5bd8c438291b1d803225a691ffd61e96cda41d492eea7d8b03190a8c9144a6",
+        "b0e513cfbafa8bf14fe7ad47a27436cee43ace712d50b1568077f451b7c3545c",
+        //    "4ca5eaab346be090ace27b1e2cccafb1729d92a1e83a183a875fe79ef0eefcbf",
+      ],
     },
     {
       closeOnEose: true,
@@ -36,7 +36,13 @@ export default function Notes({ ids }: NotesProps) {
         wrap="wrap"
       >
         {events.map((e) => (
-          <Note maxW="410px" key={e.id} event={e} components={components} />
+          <Note
+            minW="320px"
+            maxW="410px"
+            key={e.id}
+            event={e}
+            components={components}
+          />
         ))}
       </HStack>
     </Stack>

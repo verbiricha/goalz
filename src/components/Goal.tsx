@@ -42,17 +42,17 @@ import {
 } from "@ngine/nostr/nip57";
 import { DEFAULT_RELAYS } from "@ngine/const";
 import ZapButton from "@ngine/components/ZapButton";
-import { formatSatAmount, formatRelativeTime } from "@ngine/format";
+import Amount from "@ngine/components/Amount";
+import FormattedRelativeTime from "@ngine/components/FormattedRelativeTime";
+import { currencyAtom } from "@ngine/state";
 
 import Link from "@goalz/components/Link";
-import { currencyAtom, ratesAtom } from "@goalz/state";
 import ExternalLink from "@goalz/components/ExternalLink";
 import { GOAL } from "@goalz/const";
 
-function useCurrencySettings() {
+function useCurrency() {
   const currency = useAtomValue(currencyAtom);
-  const rates = useAtomValue(ratesAtom);
-  return { currency, rates };
+  return currency;
 }
 
 interface GoalInfo {
@@ -123,7 +123,7 @@ interface RaisedProps {
 }
 
 export function Raised({ latest, goal, raised }: RaisedProps) {
-  const { currency, rates } = useCurrencySettings();
+  const currency = useCurrency();
   const progress = useMemo(
     () => (goal > 0 ? (raised / goal) * 100 : 0),
     [raised, goal],
@@ -133,17 +133,19 @@ export function Raised({ latest, goal, raised }: RaisedProps) {
     <Stack gap={1}>
       {latest && (
         <Text color="gray.500">
-          Latest donation {formatRelativeTime(latest)}
+          Latest donation <FormattedRelativeTime timestamp={latest} />
         </Text>
       )}
       <Progress value={progress} colorScheme="green" size="sm" />
       <Flex justify="space-between" gap={2} wrap="wrap">
         <HStack spacing={1}>
           <Text fontWeight={600}>
-            {formatSatAmount(raised, currency, rates)}
+            <Amount amount={raised} currency={currency} />
           </Text>
           <Text color="gray.500">/</Text>
-          <Text fontWeight={600}>{formatSatAmount(goal, currency, rates)}</Text>
+          <Text fontWeight={600}>
+            <Amount amount={goal} currency={currency} />
+          </Text>
         </HStack>
         <Text fontWeight={600}>
           {isAchieved ? "100" : progress === 0 ? "0" : progress.toFixed(2)}%
@@ -160,7 +162,7 @@ interface BeneficiariesProps {
 }
 
 export function Beneficiaries({ event, zaps }: BeneficiariesProps) {
-  const { currency, rates } = useCurrencySettings();
+  const currency = useCurrency();
   const zapSplits = useMemo(() => getZapSplits(event), [event]);
   return zapSplits.length > 0 ? (
     <Stack gap={2}>
@@ -175,7 +177,7 @@ export function Beneficiaries({ event, zaps }: BeneficiariesProps) {
             <HStack gap={1}>
               <Text fontSize="xs">%{percentage.toFixed(0)}</Text>
               <Text fontSize="xs">
-                ({got > 0 ? formatSatAmount(got, currency, rates) : "-"})
+                ({got > 0 ? <Amount amount={got} currency={currency} /> : "-"})
               </Text>
             </HStack>
           </Flex>
@@ -203,7 +205,6 @@ export function GoalCard({ event, ...rest }: GoalCardProps) {
     tags,
   } = useGoalInfo(event);
   const navigate = useNavigate();
-  const { currency, rates } = useCurrencySettings();
   // Zaps
   const { events: zaps } = useEvents(
     {
@@ -294,12 +295,7 @@ export function GoalCard({ event, ...rest }: GoalCardProps) {
               <Avatar key={pubkey} pubkey={pubkey} />
             ))}
           </AvatarGroup>
-          <ZapButton
-            pubkey={event.pubkey}
-            event={event}
-            currency={currency}
-            rates={rates}
-          />
+          <ZapButton pubkey={event.pubkey} event={event} />
         </Flex>
       </CardFooter>
     </Card>
@@ -311,7 +307,7 @@ interface GoalDetailProps extends CardProps {
 }
 
 export function GoalDetail({ event }: GoalDetailProps) {
-  const { currency, rates } = useCurrencySettings();
+  const currency = useCurrency();
   const {
     link,
     title,
@@ -431,11 +427,10 @@ export function GoalDetail({ event }: GoalDetailProps) {
                       pubkey={pk}
                     />
                     <Text fontWeight={600} fontSize="lg">
-                      {formatSatAmount(
-                        zrs.reduce((acc, zr) => acc + zr.amount, 0),
-                        currency,
-                        rates,
-                      )}
+                      <Amount
+                        amount={zrs.reduce((acc, zr) => acc + zr.amount, 0)}
+                        currency={currency}
+                      />
                     </Text>
                   </Flex>
                   {message.length > 0 && (
@@ -470,7 +465,7 @@ export function GoalDetail({ event }: GoalDetailProps) {
                       pubkey={zr.pubkey}
                     />
                     <Text fontWeight={600} fontSize="lg">
-                      {formatSatAmount(zr.amount, currency, rates)}
+                      <Amount amount={zr.amount} currency={currency} />
                     </Text>
                   </Flex>
                   {zr.content.length > 0 && (
@@ -492,12 +487,7 @@ export function GoalDetail({ event }: GoalDetailProps) {
               );
             })}
       </Flex>
-      <ZapButton
-        pubkey={event.pubkey}
-        event={event}
-        currency={currency}
-        rates={rates}
-      />
+      <ZapButton pubkey={event.pubkey} event={event} />
     </Flex>
   );
 }

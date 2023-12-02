@@ -36,7 +36,6 @@ import { CheckIcon } from "@chakra-ui/icons";
 import { useAtomValue } from "jotai";
 
 import { SUPPORT, HEYA_PUBKEY } from "@goalz/const";
-import { ratesAtom } from "@goalz/state";
 import useSupporters from "@goalz/hooks/useSupporters";
 
 import Avatar from "@ngine/components/Avatar";
@@ -49,7 +48,7 @@ import { useLnurl, loadInvoice } from "@ngine/lnurl";
 import { makeZapRequest } from "@ngine/nostr/nip57";
 import { useSign } from "@ngine/context";
 import type { Currency } from "@ngine/money";
-import { relaysAtom } from "@ngine/state";
+import { ratesAtom, relaysAtom } from "@ngine/state";
 
 enum Frequency {
   daily = "daily",

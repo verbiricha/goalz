@@ -1,5 +1,13 @@
 import { useMemo } from "react";
-import { As, HStack, Text, Icon } from "@chakra-ui/react";
+import {
+  useDisclosure,
+  As,
+  Flex,
+  FlexProps,
+  HStack,
+  Text,
+  Icon,
+} from "@chakra-ui/react";
 import {
   NDKEvent,
   NDKFilter,
@@ -7,6 +15,7 @@ import {
   NDKSubscriptionCacheUsage,
 } from "@nostr-dev-kit/ndk";
 
+import ZapModal from "@ngine/components/ZapModal";
 import { Zap, Heart, Reply, Repost } from "@ngine/icons";
 import useEvents from "@ngine/nostr/useEvents";
 import { zapsSummary } from "@ngine/nostr/nip57";
@@ -19,18 +28,23 @@ const defaultKinds = [
   NDKKind.Text,
 ];
 
-interface ReactionCountProps {
+interface ReactionCountProps extends FlexProps {
   icon: As;
   count: string | number;
   hasReacted: boolean;
 }
 
-function ReactionCount({ icon, count, hasReacted }: ReactionCountProps) {
+function ReactionCount({
+  icon,
+  count,
+  hasReacted,
+  ...rest
+}: ReactionCountProps) {
   return (
-    <HStack>
+    <Flex align="center" gap={2} direction="row" {...rest}>
       <Icon as={icon} color={hasReacted ? "brand.500" : "currentColor"} />
       <Text>{count}</Text>
-    </HStack>
+    </Flex>
   );
 }
 
@@ -74,6 +88,7 @@ export default function Reactions({
   event,
   kinds = defaultKinds,
 }: ReactionsProps) {
+  const zapModal = useDisclosure();
   const [session] = useSession();
   const pubkey = session?.pubkey;
   const { zaps, reactions, replies, reposts } = useReactions(event, kinds);
@@ -94,11 +109,16 @@ export default function Reactions({
           );
         } else if (k === NDKKind.Zap) {
           return (
-            <ReactionCount
-              icon={Zap}
-              count={total}
-              hasReacted={Boolean(zaps.find((r) => r.pubkey === pubkey))}
-            />
+            <>
+              <ReactionCount
+                icon={Zap}
+                count={total}
+                hasReacted={Boolean(zaps.find((r) => r.pubkey === pubkey))}
+                onClick={zapModal.onOpen}
+                cursor="pointer"
+              />
+              <ZapModal pubkey={event.pubkey} event={event} {...zapModal} />
+            </>
           );
         } else if (k === NDKKind.Reaction) {
           return (
