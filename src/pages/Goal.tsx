@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { nip19 } from "nostr-tools";
+import { Skeleton } from "@chakra-ui/react";
 import { useParams, Navigate } from "react-router-dom";
 
 import { Goal } from "@goalz/components/Goal";
@@ -16,16 +17,17 @@ export default function GoalPage() {
   }
 
   if (decoded.type === "note") {
-    return <Goal id={decoded.data} />;
+    return <Goal key={decoded.data} id={decoded.data} />;
   }
   if (decoded.type === "nevent") {
     return (
       <Goal
+        key={decoded.data.id}
         id={decoded.data.id}
         author={decoded.data.author}
         relays={decoded.data.relays}
       />
     );
   }
-  return null;
+  return <Skeleton />;
 }
