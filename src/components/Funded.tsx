@@ -55,7 +55,7 @@ export default function Funded({ goals, zaps, pubkey }: FundedProps) {
         const authors = [...new Set(zaps.map((z) => z.zap.p))];
         const event = goals.find((ev) => ev.id === id);
         return event ? (
-          <HStack align="flex-start" justify="space-between">
+          <HStack align="flex-start" justify="space-between" gap={12}>
             <Stack>
               <GoalSummary event={event} />
               <AvatarGroup size="xs" max={5} spacing="-0.4em">
