@@ -3,22 +3,27 @@ import {
   Stack,
   HStack,
   Card,
+  CardHeader,
   CardBody,
   Text,
 } from "@chakra-ui/react";
-import { NDKEvent } from "@nostr-dev-kit/ndk";
 
+import User from "@ngine/components/User";
 import Amount from "@ngine/components/Amount";
-import { ZapRequest } from "@ngine/nostr/nip57";
+import { zapsSummary } from "@ngine/nostr/nip57";
 
 import { GoalSummary } from "@goalz/components/Goal";
+import useGoals from "@goalz/hooks/useGoals";
 
 interface ContributionsProps {
-  goals: NDKEvent[];
-  contributions: ZapRequest[];
+  pubkey: string;
 }
 
-export function Contributions({ goals, contributions }: ContributionsProps) {
+export default function Contributions({ pubkey }: ContributionsProps) {
+  const { goals, zaps } = useGoals();
+  const { zapRequests } = zapsSummary(zaps);
+  // User contributions
+  const contributions = zapRequests.filter((z) => z.pubkey === pubkey);
   const msgColor = useColorModeValue("gray.600", "gray.400");
   return (
     <Stack gap={5}>
@@ -28,15 +33,19 @@ export function Contributions({ goals, contributions }: ContributionsProps) {
           const { id, amount, e, content } = z;
           const event = goals.find((ev) => ev.id === e);
           return event ? (
-            <Card variant="outline" key={id}>
+            <Card key={id}>
+              <CardHeader>
+                <HStack key={id} justify="space-between">
+                  <User size="xs" pubkey={z.pubkey} />
+                  <Text fontSize="xl" fontWeight={700}>
+                    <Amount amount={amount} />
+                  </Text>
+                  {z.p && <User size="xs" pubkey={z.p} />}
+                </HStack>
+              </CardHeader>
               <CardBody>
                 <Stack gap={4}>
-                  <HStack key={id} justify="space-between">
-                    <GoalSummary event={event} />
-                    <Text fontSize="3xl" fontWeight={700}>
-                      <Amount amount={amount} />
-                    </Text>
-                  </HStack>
+                  <GoalSummary event={event} />
                   {content.length > 0 && (
                     <Text
                       as="blockquote"

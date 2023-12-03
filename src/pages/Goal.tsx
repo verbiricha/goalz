@@ -8,15 +8,24 @@ import { HOME } from "@goalz/routes";
 export default function GoalPage() {
   const { nevent } = useParams();
   const decoded = useMemo(() => {
-    return nip19.decode(nevent ?? "")?.data;
+    return nip19.decode(nevent ?? "");
   }, [nevent]);
 
-  if (!decoded) {
+  if (!decoded || !["note", "nevent"].includes(decoded.type)) {
     return <Navigate to={HOME} replace />;
   }
 
-  return (
-    // @ts-ignore
-    <Goal id={decoded.id} author={decoded.author} relays={decoded.relays} />
-  );
+  if (decoded.type === "note") {
+    return <Goal id={decoded.data} />;
+  }
+  if (decoded.type === "nevent") {
+    return (
+      <Goal
+        id={decoded.data.id}
+        author={decoded.data.author}
+        relays={decoded.data.relays}
+      />
+    );
+  }
+  return null;
 }

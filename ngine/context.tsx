@@ -26,7 +26,6 @@ import NDK, {
 import { generatePrivateKey, getPublicKey } from "nostr-tools";
 
 import { relaysAtom, latestRatesAtom, followsAtom } from "@ngine/state";
-import { DEFAULT_RELAYS } from "@ngine/const";
 import useSession from "@ngine/hooks/useSession";
 import useRates from "@ngine/nostr/useRates";
 
@@ -58,7 +57,7 @@ interface NgineContext {
 }
 
 const NgineContext = createContext<NgineContext>({
-  ndk: new NDK({ explicitRelayUrls: DEFAULT_RELAYS }),
+  ndk: new NDK({ explicitRelayUrls: [] }),
   nip07Login: () => {
     return Promise.reject();
   },

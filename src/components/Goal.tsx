@@ -40,7 +40,6 @@ import {
   zapTagsToSplits,
   ZapRequest,
 } from "@ngine/nostr/nip57";
-import { DEFAULT_RELAYS } from "@ngine/const";
 import ZapButton from "@ngine/components/ZapButton";
 import Amount from "@ngine/components/Amount";
 import FormattedRelativeTime from "@ngine/components/FormattedRelativeTime";
@@ -49,7 +48,7 @@ import { useLinkComponent, useLink } from "@ngine/context";
 
 import Link from "@goalz/components/Link";
 import ExternalLink from "@goalz/components/ExternalLink";
-import { GOAL } from "@goalz/const";
+import { GOAL, DEFAULT_RELAYS } from "@goalz/const";
 
 function useCurrency() {
   const currency = useAtomValue(currencyAtom);
@@ -624,15 +623,15 @@ export function GoalPreview({
 
 interface GoalProps {
   id: string;
-  author: string;
-  relays: string[];
+  author?: string;
+  relays?: string[];
 }
 
 export function Goal({ id, author, relays }: GoalProps) {
   const event = useEvent(
     {
       ids: [id],
-      authors: [author],
+      ...(author ? { authors: [author] } : {}),
     },
     relays,
   );
@@ -708,13 +707,10 @@ export function GoalSummary({ event }: { event: NDKEvent }) {
   const Link = useLinkComponent();
   const url = useLink("nevent", event.encode());
   return (
-    <Stack>
-      <Link href={url}>
-        <Heading fontSize="md" color="chakra-body-text">
-          {title}
-        </Heading>
-      </Link>
-      <User pubkey={event.pubkey} size="xs" fontSize="sm" />
-    </Stack>
+    <Link href={url}>
+      <Heading fontSize="md" color="chakra-body-text">
+        {title}
+      </Heading>
+    </Link>
   );
 }

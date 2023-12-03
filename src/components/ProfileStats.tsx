@@ -6,7 +6,6 @@ import {
   StatLabel,
   StatNumber,
   StatGroup,
-  Spinner,
 } from "@chakra-ui/react";
 
 import Amount from "@ngine/components/Amount";
@@ -15,7 +14,7 @@ import { zapsSummary, useRanking } from "@ngine/nostr/nip57";
 import useGoals from "@goalz/hooks/useGoals";
 
 export default function ProfileStats({ pubkey }: { pubkey: string }) {
-  const { zaps, zapsEose } = useGoals();
+  const { zaps } = useGoals();
   const { zapRequests } = zapsSummary(zaps);
   // User contributions
   const contributions = zapRequests.filter((z) => z.pubkey === pubkey);
@@ -39,7 +38,7 @@ export default function ProfileStats({ pubkey }: { pubkey: string }) {
           {/* @ts-ignore */}
           <Stat align="center">
             <StatNumber fontSize="3xl" fontWeight={700}>
-              {zapsEose ? goalsSupported : <Spinner />}
+              {goalsSupported}
             </StatNumber>
             <StatLabel>Funded goals</StatLabel>
           </Stat>
@@ -47,7 +46,7 @@ export default function ProfileStats({ pubkey }: { pubkey: string }) {
           {/* @ts-ignore */}
           <Stat align="center">
             <StatNumber fontSize="3xl" fontWeight={700}>
-              {zapsEose ? <Amount amount={totalZapped} /> : <Spinner />}
+              <Amount amount={totalZapped} />
             </StatNumber>
             <StatLabel>Zapped</StatLabel>
           </Stat>
@@ -55,7 +54,7 @@ export default function ProfileStats({ pubkey }: { pubkey: string }) {
           {/* @ts-ignore */}
           <Stat align="center">
             <StatNumber fontSize="3xl" fontWeight={700}>
-              {zapsEose ? rank === -1 ? "-" : rank + 1 : <Spinner />}
+              {rank === -1 ? "-" : rank + 1}
             </StatNumber>
             <StatLabel>Rank</StatLabel>
           </Stat>

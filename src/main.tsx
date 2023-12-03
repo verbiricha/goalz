@@ -3,11 +3,10 @@ import ReactDOM from "react-dom/client";
 import { IntlProvider } from "react-intl";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NDK from "@nostr-dev-kit/ndk";
-import NDKCacheAdapterDexie from "@nostr-dev-kit/ndk-cache-dexie";
 
 import { NgineProvider } from "@ngine/context";
-import { DEFAULT_RELAYS } from "@ngine/const";
 
+import { DEFAULT_RELAYS } from "@goalz/const";
 import Link from "@goalz/components/Link";
 import theme from "./theme";
 import {
@@ -32,9 +31,9 @@ import Onboarding from "./pages/Onboarding";
 import Support from "./pages/Support";
 import Hashtag from "./pages/Hashtag";
 import Ranking from "./pages/Ranking";
+import cacheAdapter from "@goalz/db";
 
 // NDK Instance
-const cacheAdapter = new NDKCacheAdapterDexie({ dbName: "goalz" });
 const ndk = new NDK({
   explicitRelayUrls: DEFAULT_RELAYS,
   outboxRelayUrls: ["wss://relay.snort.social", "wss://purplepag.es"],

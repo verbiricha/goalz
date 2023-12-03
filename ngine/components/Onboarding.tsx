@@ -29,7 +29,6 @@ import { useNDK, useNsecLogin } from "@ngine/context";
 import { relaysAtom, followsAtom } from "@ngine/state";
 import ImageUploader from "@ngine/components/ImageUploader";
 import { unixNow } from "@ngine/time";
-import { DEFAULT_RELAYS } from "@ngine/const";
 
 interface Profile {
   name: string;
@@ -182,7 +181,13 @@ export default function Onboarding({
   const ndk = useNDK();
   const toast = useToast();
   const nsecLogin = useNsecLogin();
-  const userRelays = defaultRelays || DEFAULT_RELAYS;
+  const userRelays = defaultRelays || [
+    "wss://frens.nostr1.com",
+    "wss://nos.lol",
+    "wss://nostr.mom",
+    "wss://relay.damus.io",
+    "wss://relay.nostr.band",
+  ];
   const [, setRelays] = useAtom(relaysAtom);
   const [, setProfile] = useAtom(profileAtom);
   const [, setFollowing] = useAtom(followingAtom);

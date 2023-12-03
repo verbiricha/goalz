@@ -1,13 +1,32 @@
 import { useMemo } from "react";
-import { NDKKind, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
+import {
+  NDKKind,
+  NDKEvent,
+  NDKSubscriptionCacheUsage,
+} from "@nostr-dev-kit/ndk";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@nostr-dev-kit/ndk-cache-dexie";
 
 import useEvents from "@ngine/nostr/useEvents";
 import { GOAL } from "@goalz/const";
 
 import { dedupeByPubkey } from "@ngine/utils";
+import { useNDK } from "@ngine/context";
 
 export default function useGoals() {
-  const { events, eose } = useEvents(
+  const ndk = useNDK();
+  const goals = useLiveQuery(
+    () => db.events.where({ kind: GOAL }).toArray(),
+    [],
+    [],
+  );
+  const events = useMemo(() => {
+    if (!goals) return [];
+    return goals.map((ev) => {
+      return new NDKEvent(ndk, JSON.parse(ev.event));
+    });
+  }, [goals]);
+  const { eose } = useEvents(
     {
       kinds: [GOAL],
     },
@@ -17,13 +36,13 @@ export default function useGoals() {
     },
   );
   const authors = useMemo(() => {
-    return dedupeByPubkey(events);
+    return dedupeByPubkey(goals).map((ev) => ev.pubkey);
   }, [events]);
   const eventIds = useMemo(() => {
     // todo: chunks
     return [events.map((e) => e.id)];
   }, [events]);
-  const { events: zaps, eose: zapsEose } = useEvents(
+  const { eose: zapsEose } = useEvents(
     eventIds.map((es) => {
       return {
         kinds: [NDKKind.Zap],
@@ -32,9 +51,20 @@ export default function useGoals() {
     }),
     {
       disable: !eose,
-      closeOnEose: false,
+      closeOnEose: true,
       cacheUsage: NDKSubscriptionCacheUsage.PARALLEL,
     },
   );
-  return { goals: events, authors, zaps, eose, zapsEose };
+  const zaps = useLiveQuery(
+    () => db.events.where({ kind: NDKKind.Zap }).toArray(),
+    [],
+    [],
+  );
+  const zapEvents = useMemo(() => {
+    if (!zaps) return [];
+    return zaps.map((ev) => {
+      return new NDKEvent(ndk, JSON.parse(ev.event));
+    });
+  }, [zaps]);
+  return { goals: events, authors, zaps: zapEvents, eose, zapsEose };
 }

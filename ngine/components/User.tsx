@@ -12,7 +12,7 @@ interface UserProps extends AvatarProps {
 }
 
 function shortenPubkey(pk: string) {
-  return `${pk.slice(0, 8)}:${pk.slice(-8)}`;
+  return `${pk.slice(0, 8)}`;
 }
 
 export default function User({ pubkey, ...rest }: UserProps) {
