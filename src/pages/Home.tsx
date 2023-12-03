@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 import CallToAction from "@goalz/components/CallToAction";
 import OrbitingGoals from "@goalz/components/OrbitingGoals";
-import Stats from "@goalz/components/Stats";
 import FeaturedGoals from "@goalz/components/FeaturedGoals";
 import Features from "@goalz/components/Features";
 import Support from "@goalz/components/Support";
@@ -70,7 +69,6 @@ export default function Home() {
         ctaText="Create a goal"
         ctaAction={createZapGoal}
       />
-      <Stats />
       <Features />
       <Support />
       <FeaturedNotes />
