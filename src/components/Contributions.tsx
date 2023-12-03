@@ -7,20 +7,25 @@ import {
   CardBody,
   Text,
 } from "@chakra-ui/react";
+import { NDKEvent } from "@nostr-dev-kit/ndk";
 
 import User from "@ngine/components/User";
 import Amount from "@ngine/components/Amount";
 import { zapsSummary } from "@ngine/nostr/nip57";
 
 import { GoalSummary } from "@goalz/components/Goal";
-import useGoals from "@goalz/hooks/useGoals";
 
 interface ContributionsProps {
+  goals: NDKEvent[];
+  zaps: NDKEvent[];
   pubkey: string;
 }
 
-export default function Contributions({ pubkey }: ContributionsProps) {
-  const { goals, zaps } = useGoals();
+export default function Contributions({
+  goals,
+  zaps,
+  pubkey,
+}: ContributionsProps) {
   const { zapRequests } = zapsSummary(zaps);
   // User contributions
   const contributions = zapRequests.filter((z) => z.pubkey === pubkey);
@@ -37,7 +42,7 @@ export default function Contributions({ pubkey }: ContributionsProps) {
               <CardHeader>
                 <HStack key={id} justify="space-between">
                   <User size="xs" pubkey={z.pubkey} />
-                  <Text fontSize="xl" fontWeight={700}>
+                  <Text fontSize="2xl" fontWeight={700}>
                     <Amount amount={amount} />
                   </Text>
                   {z.p && <User size="xs" pubkey={z.p} />}

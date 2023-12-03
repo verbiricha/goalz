@@ -39,16 +39,13 @@ export default function useGoals() {
     return dedupeByPubkey(goals).map((ev) => ev.pubkey);
   }, [events]);
   const eventIds = useMemo(() => {
-    // todo: chunks
-    return [events.map((e) => e.id)];
+    return events.map((e) => e.id);
   }, [events]);
   const { eose: zapsEose } = useEvents(
-    eventIds.map((es) => {
-      return {
-        kinds: [NDKKind.Zap],
-        "#e": es,
-      };
-    }),
+    {
+      kinds: [NDKKind.Zap],
+      "#e": eventIds,
+    },
     {
       disable: !eose,
       closeOnEose: true,

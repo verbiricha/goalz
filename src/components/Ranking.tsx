@@ -6,6 +6,7 @@ import {
   Heading,
   Text,
   Icon,
+  IconProps,
   Button,
 } from "@chakra-ui/react";
 
@@ -17,11 +18,15 @@ import useGoals from "@goalz/hooks/useGoals";
 import Trophy from "@goalz/icons/Trophy";
 import Medal from "@goalz/icons/Medal";
 
-const n = 10;
+const n = 9;
+
+export function Rank1Icon(props: IconProps) {
+  const firstColor = useColorModeValue("orange.500", "orange.300");
+  return <Icon as={Medal} boxSize={5} color={firstColor} {...props} />;
+}
 
 export default function Ranking() {
   const rankColor = useColorModeValue("gray.600", "gray.400");
-  const firstColor = useColorModeValue("orange.500", "orange.300");
   const { zaps } = useGoals();
   const ranking = useRanking(zaps);
   const [maxUsers, setMaxUsers] = useState(n);
@@ -32,7 +37,14 @@ export default function Ranking() {
   }
 
   return (
-    <Stack gap={8} w={{ base: "auto", sm: "100%" }}>
+    <Stack
+      gap={8}
+      w={{
+        base: "xs",
+        md: "md",
+        lg: "lg",
+      }}
+    >
       <HStack>
         <Icon as={Trophy} boxSize={6} />
         <Heading>Ranking</Heading>
@@ -42,14 +54,13 @@ export default function Ranking() {
           return (
             <HStack key={pubkey} gap={12} justify="space-between">
               <HStack gap={4}>
-                {idx === 0 ? (
-                  <Icon as={Medal} boxSize={5} color={firstColor} />
-                ) : (
-                  <Text fontSize="3xl" color={rankColor}>
-                    {idx + 1}
-                  </Text>
-                )}
-                <User pubkey={pubkey} />
+                <Text fontSize="3xl" color={rankColor}>
+                  {idx + 1}.
+                </Text>
+                <HStack>
+                  <User pubkey={pubkey} />
+                  {idx === 0 && <Rank1Icon />}
+                </HStack>
               </HStack>
               <Text fontSize="xl" fontWeight={600}>
                 <Amount amount={amount} />
@@ -58,7 +69,12 @@ export default function Ranking() {
           );
         })}
         {canSeeMore && (
-          <Button variant="outline" onClick={seeMore}>
+          <Button
+            mt={3}
+            variant="outline"
+            colorScheme="brand"
+            onClick={seeMore}
+          >
             See more
           </Button>
         )}

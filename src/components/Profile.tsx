@@ -13,10 +13,12 @@ import {
   TabPanels,
   Tab,
   TabPanel,
+  Image,
 } from "@chakra-ui/react";
 import type { NDKEvent } from "@nostr-dev-kit/ndk";
 
-import User from "@ngine/components/User";
+import Username from "@ngine/components/Username";
+import Avatar from "@ngine/components/Avatar";
 import FollowButton from "@ngine/components/FollowButton";
 import Markdown from "@ngine/components/Markdown";
 import useProfile from "@ngine/nostr/useProfile";
@@ -30,6 +32,9 @@ import { GOAL } from "@goalz/const";
 import { GoalCard } from "@goalz/components/Goal";
 import ProfileStats from "@goalz/components/ProfileStats";
 import Contributions from "@goalz/components/Contributions";
+import Funded from "@goalz/components/Funded";
+
+import useGoals from "@goalz/hooks/useGoals";
 
 interface ProfileProps {
   pubkey: string;
@@ -171,18 +176,23 @@ interface ProfileTabsProps {
 }
 
 function ProfileTabs({ pubkey, events }: ProfileTabsProps) {
+  const { goals, zaps } = useGoals();
   return (
     <Tabs variant="soft-rounded" colorScheme="gray" size="sm" mt={2}>
       <TabList>
         <Tab>Goals</Tab>
         <Tab>Contributions</Tab>
+        <Tab>Funded</Tab>
       </TabList>
       <TabPanels>
         <TabPanel px={0}>
           <Goals events={events} />
         </TabPanel>
         <TabPanel px={0}>
-          <Contributions pubkey={pubkey} />
+          <Contributions goals={goals} zaps={zaps} pubkey={pubkey} />
+        </TabPanel>
+        <TabPanel px={0}>
+          <Funded goals={goals} zaps={zaps} pubkey={pubkey} />
         </TabPanel>
       </TabPanels>
     </Tabs>
@@ -200,13 +210,16 @@ export default function Profile({ pubkey }: ProfileProps) {
   });
   return (
     <Stack w="100%" gap={3}>
+      {profile?.banner && <Image src={profile.banner} />}
       <Flex align="center" justify="space-between">
-        <User
-          pubkey={pubkey}
-          size={{ base: "sm", md: "lg" }}
-          fontSize={{ base: "xl", md: "3xl" }}
-          fontWeight={700}
-        />
+        <HStack>
+          <Avatar pubkey={pubkey} size={{ base: "sm", md: "lg" }} />
+          <Username
+            pubkey={pubkey}
+            fontSize={{ base: "xl", md: "3xl" }}
+            fontWeight={700}
+          />
+        </HStack>
         <FollowButton variant="outline" pubkey={pubkey} />
       </Flex>
       {profile?.about && <Markdown content={profile.about} />}

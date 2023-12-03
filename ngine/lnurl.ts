@@ -16,12 +16,14 @@ interface LNURLService {
 }
 
 export function useLnurl(profile: NDKUserProfile | null) {
+  const key = profile?.lud16 ?? "none";
   const query = useQuery({
-    queryKey: ["lnurl", profile?.lud16 ?? "none"],
+    queryKey: ["lnurl", key],
     queryFn: async () => {
-      if (profile?.lud16) {
-        return loadService(profile?.lud16);
+      if (key === "none") {
+        return null;
       }
+      return loadService(key);
     },
     retry: false,
     refetchOnMount: false,

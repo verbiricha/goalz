@@ -13,6 +13,7 @@ import {
   Image,
   Stack,
   Heading,
+  HeadingProps,
   Text,
   Progress,
   AvatarGroup,
@@ -702,13 +703,17 @@ export function GoalBubble({ event }: { event: NDKEvent }) {
   );
 }
 
-export function GoalSummary({ event }: { event: NDKEvent }) {
+interface GoalSummaryProps extends HeadingProps {
+  event: NDKEvent;
+}
+
+export function GoalSummary({ event, ...rest }: GoalSummaryProps) {
   const { title } = useGoalInfo(event);
   const Link = useLinkComponent();
   const url = useLink("nevent", event.encode());
   return (
     <Link href={url}>
-      <Heading fontSize="md" color="chakra-body-text">
+      <Heading fontSize="xl" color="chakra-body-text" {...rest}>
         {title}
       </Heading>
     </Link>

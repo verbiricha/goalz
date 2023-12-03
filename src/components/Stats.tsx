@@ -66,7 +66,7 @@ export default function Stats() {
           <Stat align="center">
             <StatNumber fontSize="4xl">{goalsAmount}</StatNumber>
             <StatLabel fontSize="xl">Goals</StatLabel>
-            <StatHelpText>{goalAuthors.length} contributors</StatHelpText>
+            <StatHelpText>{goalAuthors.length} authors</StatHelpText>
           </Stat>
           <Contributions events={zaps} />
         </Flex>

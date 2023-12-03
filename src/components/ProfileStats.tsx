@@ -11,6 +11,7 @@ import {
 import Amount from "@ngine/components/Amount";
 import { zapsSummary, useRanking } from "@ngine/nostr/nip57";
 
+import { Rank1Icon } from "@goalz/components/Ranking";
 import useGoals from "@goalz/hooks/useGoals";
 
 export default function ProfileStats({ pubkey }: { pubkey: string }) {
@@ -54,7 +55,16 @@ export default function ProfileStats({ pubkey }: { pubkey: string }) {
           {/* @ts-ignore */}
           <Stat align="center">
             <StatNumber fontSize="3xl" fontWeight={700}>
-              {rank === -1 ? "-" : rank + 1}
+              {rank === -1 ? (
+                "-"
+              ) : rank === 0 ? (
+                <>
+                  {rank + 1}
+                  <Rank1Icon ml={1} />
+                </>
+              ) : (
+                rank + 1
+              )}
             </StatNumber>
             <StatLabel>Rank</StatLabel>
           </Stat>
