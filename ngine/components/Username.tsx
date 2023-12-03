@@ -4,7 +4,7 @@ import type { TextProps } from "@chakra-ui/react";
 import useProfile from "@ngine/nostr/useProfile";
 
 function shortenPubkey(pk: string) {
-  return `${pk.slice(0, 8)}:${pk.slice(-8)}`;
+  return `${pk.slice(0, 8)}`;
 }
 
 interface UsernameProps extends TextProps {
