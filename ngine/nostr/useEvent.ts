@@ -14,9 +14,10 @@ export default function useEvent(filter: NDKFilter, relays?: string[]) {
   const [event, setEvent] = useState<NDKEvent | null>(null);
 
   useEffect(() => {
-    const relaySet = relays
-      ? NDKRelaySet.fromRelayUrls(relays, ndk)
-      : undefined;
+    const relaySet =
+      relays?.length ?? 0 > 0
+        ? NDKRelaySet.fromRelayUrls(relays as string[], ndk)
+        : undefined;
     ndk
       .fetchEvent(
         filter,

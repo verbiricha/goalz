@@ -6,6 +6,7 @@ import { nip19 } from "nostr-tools";
 
 import Username from "./Username";
 import NEvent from "./NEvent";
+import NAddr from "./NAddr";
 import {
   useLinks,
   useLinkComponent,
@@ -177,7 +178,6 @@ function extractNevents(fragments: Fragment[], components: Components) {
                 const { id, relays } = decoded.data;
                 return (
                   <NEvent
-                    key={id}
                     id={id}
                     relays={relays || []}
                     components={components}
@@ -185,6 +185,71 @@ function extractNevents(fragments: Fragment[], components: Components) {
                 );
               }
               return null;
+            } catch (error) {
+              return i;
+            }
+          } else {
+            return i;
+          }
+        });
+      }
+      return f;
+    })
+    .flat();
+}
+
+function extractNoteIds(fragments: Fragment[], components: Components) {
+  return fragments
+    .map((f) => {
+      if (typeof f === "string") {
+        return f.split(/(nostr:note1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("nostr:note1")) {
+            try {
+              const decoded = nip19.decode(i.replace(NostrPrefixRegex, ""));
+              if (decoded.type === "note") {
+                return (
+                  <NEvent
+                    id={decoded.data}
+                    relays={[]}
+                    components={components}
+                  />
+                );
+              }
+            } catch (error) {
+              return i;
+            }
+          } else {
+            return i;
+          }
+        });
+      }
+      return f;
+    })
+    .flat();
+}
+
+function extractNaddrs(fragments: Fragment[], components: Components) {
+  return fragments
+    .map((f) => {
+      if (typeof f === "string") {
+        return f.split(/(nostr:naddr1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("nostr:naddr1")) {
+            try {
+              const naddr = i.replace(NostrPrefixRegex, "");
+              const decoded = nip19.decode(naddr);
+              if (decoded.type === "naddr") {
+                const { kind, pubkey, identifier, relays } = decoded.data;
+                console.log("NADDR", { kind, pubkey, identifier, relays });
+                return (
+                  <NAddr
+                    kind={Number(kind)}
+                    pubkey={pubkey}
+                    identifier={identifier}
+                    relays={relays || []}
+                    components={components}
+                  />
+                );
+              }
             } catch (error) {
               return i;
             }
@@ -230,9 +295,9 @@ function transformText(
   let result = extractNprofiles(fragments, links, Link);
   result = extractNpubs(result, links, Link);
   result = extractNevents(result, components);
+  result = extractNoteIds(result, components);
   result = extractHashtags(result, links, Link);
-  //fragments = extractNaddrs(fragments);
-  //fragments = extractNoteIds(fragments);
+  result = extractNaddrs(result, components);
 
   return result;
 }
