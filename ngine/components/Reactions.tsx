@@ -6,6 +6,7 @@ import {
   Flex,
   FlexProps,
   HStack,
+  StackProps,
   Text,
   Icon,
 } from "@chakra-ui/react";
@@ -17,14 +18,17 @@ import {
 } from "@nostr-dev-kit/ndk";
 
 import ZapModal from "@ngine/components/ZapModal";
+import RepostModal from "@ngine/components/RepostModal";
 import { Zap, Heart, Reply, Repost } from "@ngine/icons";
 import useEvents from "@ngine/nostr/useEvents";
 import { zapsSummary } from "@ngine/nostr/nip57";
 import useSession from "@ngine/hooks/useSession";
+import type { Components } from "@ngine/types";
 
 const defaultKinds = [
   NDKKind.Zap,
   NDKKind.Repost,
+  NDKKind.GenericRepost,
   NDKKind.Reaction,
   NDKKind.Text,
 ];
@@ -35,6 +39,7 @@ interface ReactionCountProps extends FlexProps {
   hasReacted: boolean;
 }
 
+// todo: components
 function ReactionCount({
   icon,
   count,
@@ -50,9 +55,10 @@ function ReactionCount({
   );
 }
 
-interface ReactionsProps {
+interface ReactionsParams {
   event: NDKEvent;
   kinds?: NDKKind[];
+  components?: Components;
 }
 
 function useReactions(event: NDKEvent, kinds: NDKKind[]) {
@@ -80,17 +86,25 @@ function useReactions(event: NDKEvent, kinds: NDKKind[]) {
     [events],
   );
   const reposts = useMemo(
-    () => events.filter((e) => e.kind === NDKKind.Repost),
+    () =>
+      events.filter(
+        (e) => e.kind === NDKKind.Repost || e.kind === NDKKind.GenericRepost,
+      ),
     [events],
   );
   return { zaps, reactions, replies, reposts };
 }
 
+interface ReactionsProps extends ReactionsParams, StackProps {}
+
 export default function Reactions({
   event,
   kinds = defaultKinds,
+  components,
+  ...rest
 }: ReactionsProps) {
   const zapModal = useDisclosure();
+  const repostModal = useDisclosure();
   const [session] = useSession();
   const pubkey = session?.pubkey;
   const { zaps, reactions, replies, reposts } = useReactions(event, kinds);
@@ -99,7 +113,7 @@ export default function Reactions({
   }, [zaps]);
 
   return (
-    <HStack color="gray.500" fontSize="sm" justify="space-between" spacing={6}>
+    <HStack color="gray.500" fontSize="sm" spacing={6} {...rest}>
       {kinds.map((k) => {
         if (k === NDKKind.Text) {
           return (
@@ -118,8 +132,8 @@ export default function Reactions({
                 hasReacted={Boolean(
                   zapRequests.find((r) => r.pubkey === pubkey),
                 )}
-                onClick={zapModal.onOpen}
-                cursor="pointer"
+                onClick={pubkey ? zapModal.onOpen : undefined}
+                cursor={pubkey ? "pointer" : "auto"}
               />
               <ZapModal pubkey={event.pubkey} event={event} {...zapModal} />
             </>
@@ -129,16 +143,27 @@ export default function Reactions({
             <ReactionCount
               icon={Heart}
               count={reactions.length}
+              onClick={undefined}
+              cursor={pubkey ? "pointer" : "auto"}
               hasReacted={Boolean(reactions.find((r) => r.pubkey === pubkey))}
             />
           );
-        } else if (k === NDKKind.Repost) {
+        } else if (k === NDKKind.Repost || k === NDKKind.GenericRepost) {
           return (
-            <ReactionCount
-              icon={Repost}
-              count={reposts.length}
-              hasReacted={Boolean(reposts.find((r) => r.pubkey === pubkey))}
-            />
+            <>
+              <ReactionCount
+                icon={Repost}
+                count={reposts.length}
+                hasReacted={Boolean(reposts.find((r) => r.pubkey === pubkey))}
+                onClick={pubkey ? repostModal.onOpen : undefined}
+                cursor={pubkey ? "pointer" : "auto"}
+              />
+              <RepostModal
+                event={event}
+                components={components}
+                {...repostModal}
+              />
+            </>
           );
         }
       })}

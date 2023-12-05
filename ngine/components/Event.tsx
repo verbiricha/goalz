@@ -1,33 +1,27 @@
 import { useMemo, createElement } from "react";
-import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
+import { NDKKind } from "@nostr-dev-kit/ndk";
 
-import Note from "@ngine/components/Note";
-import { Components } from "@ngine/types";
-
-export interface EventProps {
-  event: NDKEvent;
-  components?: Components;
-}
+import { Note, EventProps, Components } from "@ngine/react";
 
 const defaultComponents = {
   [NDKKind.Text]: Note,
 } as Components;
 
-export default function Event({ event, components }: EventProps) {
+export default function Event({ event, components, ...props }: EventProps) {
   const component = useMemo(() => {
     // @ts-ignore
     if (components && components[event.kind]) {
       const element = components[event.kind as number];
       return (
         // @ts-ignore
-        createElement(element, { event })
+        createElement(element, { ...props, event, components })
       );
     }
     if (defaultComponents[event.kind as number]) {
       const element = defaultComponents[event.kind as number];
       return (
         // @ts-ignore
-        createElement(element, { event })
+        createElement(element, { ...props, event, components })
       );
     }
     return null;

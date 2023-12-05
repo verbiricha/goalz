@@ -239,7 +239,6 @@ function extractNaddrs(fragments: Fragment[], components: Components) {
               const decoded = nip19.decode(naddr);
               if (decoded.type === "naddr") {
                 const { kind, pubkey, identifier, relays } = decoded.data;
-                console.log("NADDR", { kind, pubkey, identifier, relays });
                 return (
                   <NAddr
                     kind={Number(kind)}

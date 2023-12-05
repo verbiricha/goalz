@@ -28,10 +28,17 @@ import type { NDKEvent } from "@nostr-dev-kit/ndk";
 import { useAtomValue } from "jotai";
 
 import { Image as ImageIcon } from "@ngine/icons";
-import User from "@ngine/components/User";
-import Avatar from "@ngine/components/Avatar";
-import Event from "@ngine/components/Event";
-import Markdown from "@ngine/components/Markdown";
+import {
+  User,
+  Avatar,
+  Amount,
+  Event,
+  ZapButton,
+  FormattedRelativeTime,
+  Reactions,
+  EventMenu,
+  Markdown,
+} from "@ngine/react";
 import useEvent from "@ngine/nostr/useEvent";
 import useEvents from "@ngine/nostr/useEvents";
 import useProfile from "@ngine/nostr/useProfile";
@@ -41,9 +48,6 @@ import {
   zapTagsToSplits,
   ZapRequest,
 } from "@ngine/nostr/nip57";
-import ZapButton from "@ngine/components/ZapButton";
-import Amount from "@ngine/components/Amount";
-import FormattedRelativeTime from "@ngine/components/FormattedRelativeTime";
 import { currencyAtom } from "@ngine/state";
 import { useLinkComponent, useLink } from "@ngine/context";
 
@@ -290,14 +294,28 @@ export function GoalCard({ event, ...rest }: GoalCardProps) {
         </Stack>
       </CardBody>
       <CardFooter>
-        <Flex align="center" justifyContent="space-between" w="100%">
-          <AvatarGroup size="sm" max={5} spacing="-0.4em">
-            {zappers.map((pubkey) => (
-              <Avatar key={pubkey} pubkey={pubkey} />
-            ))}
-          </AvatarGroup>
-          <ZapButton pubkey={event.pubkey} event={event} />
-        </Flex>
+        <Stack w="100%">
+          <HStack align="center" justifyContent="space-between">
+            <AvatarGroup size="sm" max={5} spacing="-0.4em">
+              {zappers.map((pubkey) => (
+                <Avatar key={pubkey} pubkey={pubkey} />
+              ))}
+            </AvatarGroup>
+            <ZapButton pubkey={event.pubkey} event={event} />
+          </HStack>
+          <HStack align="center" justifyContent="space-between">
+            <Reactions
+              event={event}
+              kinds={[
+                NDKKind.GenericRepost, // NDKKind.Reaction
+              ]}
+              components={{
+                [GOAL]: GoalCard,
+              }}
+            />
+            <EventMenu event={event} />
+          </HStack>
+        </Stack>
       </CardFooter>
     </Card>
   );

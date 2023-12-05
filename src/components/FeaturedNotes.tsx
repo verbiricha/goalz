@@ -36,13 +36,7 @@ export default function FeaturedNotes() {
         wrap="wrap"
       >
         {events.map((e) => (
-          <Note
-            minW="320px"
-            maxW="410px"
-            key={e.id}
-            event={e}
-            components={components}
-          />
+          <Note minW="320px" maxW="410px" event={e} components={components} />
         ))}
       </HStack>
     </Stack>

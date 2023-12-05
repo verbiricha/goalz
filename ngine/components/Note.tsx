@@ -7,40 +7,46 @@ import {
   CardFooter,
   CardProps,
 } from "@chakra-ui/react";
-import { NDKEvent } from "@nostr-dev-kit/ndk";
 
 import User from "@ngine/components/User";
 import EventMenu from "@ngine/components/EventMenu";
 import Markdown from "@ngine/components/Markdown";
 import Reactions from "@ngine/components/Reactions";
 import FormattedRelativeTime from "@ngine/components/FormattedRelativeTime";
-import { Components } from "@ngine/types";
+import { EventProps } from "@ngine/types";
 
-interface NoteProps extends CardProps {
-  event: NDKEvent;
-  components?: Components;
-}
+interface NoteProps extends EventProps, CardProps {}
 
-export default function Note({ event, components, ...rest }: NoteProps) {
+// todo: collapsed + read more
+// todo: image gallery
+export default function Note({
+  event,
+  components,
+  showReactions = true,
+}: NoteProps) {
   return (
-    <Card {...rest}>
+    <Card>
       <CardHeader>
         <HStack align="center" justify="space-between">
-          <User pubkey={event.pubkey} />
-          <Text color="gray.400" fontSize="sm">
-            <FormattedRelativeTime timestamp={event.created_at ?? 0} />
-          </Text>
+          <HStack>
+            <User pubkey={event.pubkey} />
+            {event.sig && (
+              <Text color="gray.400" fontSize="sm">
+                <FormattedRelativeTime timestamp={event.created_at ?? 0} />
+              </Text>
+            )}
+          </HStack>
+          {event.sig && <EventMenu event={event} />}
         </HStack>
       </CardHeader>
       <CardBody>
         <Markdown content={event.content} components={components} />
       </CardBody>
-      <CardFooter>
-        <HStack align="center" justify="space-between" w="100%">
-          <Reactions event={event} />
-          <EventMenu event={event} />
-        </HStack>
-      </CardFooter>
+      {showReactions && (
+        <CardFooter>
+          <Reactions event={event} components={components} />
+        </CardFooter>
+      )}
     </Card>
   );
 }
