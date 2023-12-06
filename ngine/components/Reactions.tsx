@@ -9,129 +9,110 @@ import {
   StackProps,
   Text,
   Icon,
+  Image,
 } from "@chakra-ui/react";
+import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
+
 import {
-  NDKEvent,
-  NDKFilter,
-  NDKKind,
-  NDKSubscriptionCacheUsage,
-} from "@nostr-dev-kit/ndk";
-
-import ZapModal from "@ngine/components/ZapModal";
-import RepostModal from "@ngine/components/RepostModal";
+  useSession,
+  useReactions,
+  RepostModal,
+  ReplyModal,
+  ReactionPicker,
+  ZapModal,
+  EventProps,
+} from "@ngine/react";
 import { Zap, Heart, Reply, Repost } from "@ngine/icons";
-import useEvents from "@ngine/nostr/useEvents";
-import { zapsSummary } from "@ngine/nostr/nip57";
-import useSession from "@ngine/hooks/useSession";
-import type { Components } from "@ngine/types";
+import { zapsSummary, ZapRequest } from "@ngine/nostr/nip57";
 
-const defaultKinds = [
-  NDKKind.Zap,
-  NDKKind.Repost,
-  NDKKind.GenericRepost,
-  NDKKind.Reaction,
-  NDKKind.Text,
-];
+const defaultReactions = [NDKKind.Zap, NDKKind.Reaction];
 
 interface ReactionCountProps extends FlexProps {
   icon: As;
   count: string | number;
-  hasReacted: boolean;
+  reaction?: NDKEvent | ZapRequest;
 }
 
 // todo: components
-function ReactionCount({
-  icon,
-  count,
-  hasReacted,
-  ...rest
-}: ReactionCountProps) {
+function ReactionCount({ icon, count, reaction, ...rest }: ReactionCountProps) {
+  const emoji = reaction?.kind === NDKKind.Reaction ? reaction.content : null;
+  const hasReacted = Boolean(reaction);
   const highlighted = useColorModeValue("brand.500", "brand.100");
+  const customEmoji = reaction?.tags.find(
+    (t) =>
+      emoji &&
+      t[0] === "emoji" &&
+      t[1] === `${emoji.slice(1, emoji?.length - 1)}`,
+  );
   return (
     <Flex align="center" gap={2} direction="row" {...rest}>
-      <Icon as={icon} color={hasReacted ? highlighted : "currentColor"} />
-      <Text>{count}</Text>
+      {customEmoji ? (
+        <Image boxSize={4} src={customEmoji[2]} />
+      ) : emoji && !["+", "-"].includes(emoji) ? (
+        <Text>{emoji}</Text>
+      ) : (
+        <Icon as={icon} color={hasReacted ? highlighted : "currentColor"} />
+      )}
+      <Text color={hasReacted ? highlighted : undefined}>{count}</Text>
     </Flex>
   );
 }
 
-interface ReactionsParams {
-  event: NDKEvent;
-  kinds?: NDKKind[];
-  components?: Components;
+interface ReactionsProps extends EventProps, StackProps {
+  reactions?: NDKKind[];
 }
 
-function useReactions(event: NDKEvent, kinds: NDKKind[]) {
-  const [t, id] = useMemo(() => event.tagReference(), [event]);
-  const filter = useMemo(() => {
-    return {
-      kinds,
-      [`#${t}`]: [id],
-    } as NDKFilter;
-  }, [t, id, kinds]);
-  const { events } = useEvents(filter, {
-    closeOnEose: false,
-    cacheUsage: NDKSubscriptionCacheUsage.PARALLEL,
-  });
-  const zaps = useMemo(
-    () => events.filter((e) => e.kind === NDKKind.Zap),
-    [events],
-  );
-  const reactions = useMemo(
-    () => events.filter((e) => e.kind === NDKKind.Reaction),
-    [events],
-  );
-  const replies = useMemo(
-    () => events.filter((e) => e.kind === NDKKind.Text),
-    [events],
-  );
-  const reposts = useMemo(
-    () =>
-      events.filter(
-        (e) => e.kind === NDKKind.Repost || e.kind === NDKKind.GenericRepost,
-      ),
-    [events],
-  );
-  return { zaps, reactions, replies, reposts };
-}
-
-interface ReactionsProps extends ReactionsParams, StackProps {}
+// todo: reply/quote
 
 export default function Reactions({
   event,
-  kinds = defaultKinds,
+  reactions: reactionKinds = defaultReactions,
   components,
   ...rest
 }: ReactionsProps) {
   const zapModal = useDisclosure();
   const repostModal = useDisclosure();
+  const reactionModal = useDisclosure();
+  const replyModal = useDisclosure();
   const [session] = useSession();
   const pubkey = session?.pubkey;
-  const { zaps, reactions, replies, reposts } = useReactions(event, kinds);
+  const { zaps, reactions, replies, reposts } = useReactions(
+    event,
+    reactionKinds,
+  );
   const { zapRequests, total } = useMemo(() => {
     return zapsSummary(zaps);
   }, [zaps]);
 
   return (
     <HStack color="gray.500" fontSize="sm" spacing={6} {...rest}>
-      {kinds.map((k) => {
+      {reactionKinds.map((k) => {
         if (k === NDKKind.Text) {
+          const reaction = replies.find((ev) => ev.pubkey === pubkey);
           return (
-            <ReactionCount
-              icon={Reply}
-              count={replies.length}
-              hasReacted={Boolean(replies.find((ev) => ev.pubkey === pubkey))}
-            />
+            <>
+              <ReactionCount
+                icon={Reply}
+                count={replies.length}
+                reaction={reaction}
+                onClick={pubkey ? replyModal.onOpen : undefined}
+                cursor={pubkey ? "pointer" : "auto"}
+              />
+              <ReplyModal
+                event={event}
+                components={components}
+                {...replyModal}
+              />
+            </>
           );
         } else if (k === NDKKind.Zap) {
+          const reaction = zapRequests.find((r) => r.pubkey === pubkey);
           return (
             <>
               <ReactionCount
                 icon={Zap}
                 count={total}
-                hasReacted={Boolean(
-                  zapRequests.find((r) => r.pubkey === pubkey),
-                )}
+                reaction={reaction}
                 onClick={pubkey ? zapModal.onOpen : undefined}
                 cursor={pubkey ? "pointer" : "auto"}
               />
@@ -139,22 +120,31 @@ export default function Reactions({
             </>
           );
         } else if (k === NDKKind.Reaction) {
+          const reaction = reactions.find((r) => r.pubkey === pubkey);
           return (
-            <ReactionCount
-              icon={Heart}
-              count={reactions.length}
-              onClick={undefined}
-              cursor={pubkey ? "pointer" : "auto"}
-              hasReacted={Boolean(reactions.find((r) => r.pubkey === pubkey))}
-            />
+            <>
+              <ReactionCount
+                icon={Heart}
+                count={reactions.length}
+                reaction={reaction}
+                onClick={pubkey ? reactionModal.onOpen : undefined}
+                cursor={pubkey ? "pointer" : "auto"}
+              />
+              <ReactionPicker
+                event={event}
+                components={components}
+                {...reactionModal}
+              />
+            </>
           );
         } else if (k === NDKKind.Repost || k === NDKKind.GenericRepost) {
+          const repost = reposts.find((r) => r.pubkey === pubkey);
           return (
             <>
               <ReactionCount
                 icon={Repost}
                 count={reposts.length}
-                hasReacted={Boolean(reposts.find((r) => r.pubkey === pubkey))}
+                reaction={repost}
                 onClick={pubkey ? repostModal.onOpen : undefined}
                 cursor={pubkey ? "pointer" : "auto"}
               />

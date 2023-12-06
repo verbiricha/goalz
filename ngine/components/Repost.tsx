@@ -10,8 +10,8 @@ interface RepostProps extends EventProps {
 export default function Repost({ author, ...props }: RepostProps) {
   return (
     <Stack>
-      <HStack>
-        <Icon as={RepostIcon} />
+      <HStack align="center">
+        <Icon as={RepostIcon} boxSize={4} />
         <Username pubkey={author} />
       </HStack>
       <Event {...props} />

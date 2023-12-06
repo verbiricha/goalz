@@ -317,7 +317,7 @@ export default function Markdown({
     return {
       p({ children }: { children: string }) {
         return (
-          <p>
+          <p dir="auto">
             {transformText(
               [children],
               components ?? ({} as Components),
@@ -325,6 +325,18 @@ export default function Markdown({
               Link,
             )}
           </p>
+        );
+      },
+      li({ children }: { children: string }) {
+        return (
+          <li>
+            {transformText(
+              [children],
+              components ?? ({} as Components),
+              links,
+              Link,
+            )}
+          </li>
         );
       },
       a({ href, children, ...props }: { href: string; children: string }) {

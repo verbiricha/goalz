@@ -11,7 +11,7 @@ const contrast = defineStyle({
   },
 });
 
-export const buttonTheme = defineStyleConfig({
+export default defineStyleConfig({
   defaultProps: {
     variant: "contrast",
   },

@@ -7,15 +7,20 @@ import {
   CardFooter,
   CardProps,
 } from "@chakra-ui/react";
+import { NDKKind } from "@nostr-dev-kit/ndk";
 
-import User from "@ngine/components/User";
-import EventMenu from "@ngine/components/EventMenu";
-import Markdown from "@ngine/components/Markdown";
-import Reactions from "@ngine/components/Reactions";
-import FormattedRelativeTime from "@ngine/components/FormattedRelativeTime";
-import { EventProps } from "@ngine/types";
+import {
+  User,
+  EventMenu,
+  Markdown,
+  Reactions,
+  EventProps,
+  FormattedRelativeTime,
+} from "@ngine/react";
 
 interface NoteProps extends EventProps, CardProps {}
+
+const reactions = [NDKKind.Zap, NDKKind.Repost, NDKKind.Reaction, NDKKind.Text];
 
 // todo: collapsed + read more
 // todo: image gallery
@@ -23,20 +28,21 @@ export default function Note({
   event,
   components,
   showReactions = true,
+  ...rest
 }: NoteProps) {
+  // todo: replies
   return (
-    <Card>
+    <Card variant="note" {...rest}>
       <CardHeader>
         <HStack align="center" justify="space-between">
-          <HStack>
-            <User pubkey={event.pubkey} />
-            {event.sig && (
+          <User pubkey={event.pubkey} />
+          {event.sig && (
+            <HStack align="flex-start">
               <Text color="gray.400" fontSize="sm">
                 <FormattedRelativeTime timestamp={event.created_at ?? 0} />
               </Text>
-            )}
-          </HStack>
-          {event.sig && <EventMenu event={event} />}
+            </HStack>
+          )}
         </HStack>
       </CardHeader>
       <CardBody>
@@ -44,7 +50,14 @@ export default function Note({
       </CardBody>
       {showReactions && (
         <CardFooter>
-          <Reactions event={event} components={components} />
+          <HStack align="center" justify="space-between" w="100%">
+            <Reactions
+              reactions={reactions}
+              event={event}
+              components={components}
+            />
+            <EventMenu event={event} reactions={reactions} />
+          </HStack>
         </CardFooter>
       )}
     </Card>

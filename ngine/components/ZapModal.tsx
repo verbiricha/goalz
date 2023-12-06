@@ -34,7 +34,6 @@ import { generatePrivateKey, getPublicKey } from "nostr-tools";
 import { NDKEvent, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import("@getalby/bitcoin-connect-react"); // enable NWC
 
-import { makeZapRequest, getZapSplits, ZapSplit } from "@ngine/nostr/nip57";
 import User from "@ngine/components/User";
 import QrCode from "@ngine/components/QrCode";
 import Amount from "@ngine/components/Amount";
@@ -48,6 +47,7 @@ import { useSign } from "@ngine/context";
 import { convertSatsToFiat } from "@ngine/money";
 import type { Currency, Rates } from "@ngine/money";
 import { currencyAtom, ratesAtom } from "@ngine/state";
+import { makeZapRequest, getZapSplits, ZapSplit } from "@ngine/nostr/nip57";
 
 function valueToEmoji(sats: number) {
   if (sats < 420) {

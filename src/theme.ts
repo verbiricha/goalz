@@ -4,46 +4,31 @@ import "@fontsource/figtree/500.css";
 import "@fontsource/figtree/600.css";
 import "@fontsource/figtree/700.css";
 
-import {
-  buttonTheme,
-  tagTheme,
-  cardTheme,
-  progressTheme,
-  linkTheme,
-  avatarTheme,
-} from "./theme/components";
+import { theme } from "@ngine/react";
 
-const theme = extendTheme({
-  fonts: {
-    heading: `'Figtree', sans-serif`,
-    body: `'Figtree', sans-serif`,
-  },
-  config: {
-    initialColorMode: "dark",
-    useSystemColorMode: false,
-  },
-  colors: {
-    brand: {
-      50: "#FAF6FF",
-      100: "#E8DAFF",
-      200: "#B1A4E9",
-      300: "#8B7BE7",
-      400: "#6652E5",
-      500: "#6941C6",
-      600: "#5E32BA",
-      700: "#5730B1",
-      800: "#512FAB",
-      900: "#4F1AA5",
+import buttonTheme from "@goalz/theme/components/button";
+import tagTheme from "@goalz/theme/components/tag";
+import progressTheme from "@goalz/theme/components/progress";
+import avatarTheme from "@goalz/theme/components/avatar";
+import cardTheme from "@goalz/theme/components/card";
+
+export default extendTheme(
+  {
+    fonts: {
+      heading: `'Figtree', sans-serif`,
+      body: `'Figtree', sans-serif`,
+    },
+    config: {
+      initialColorMode: "dark",
+      useSystemColorMode: false,
+    },
+    components: {
+      Tag: tagTheme,
+      Button: buttonTheme,
+      Progress: progressTheme,
+      Avatar: avatarTheme,
+      Card: cardTheme,
     },
   },
-  components: {
-    Button: buttonTheme,
-    Tag: tagTheme,
-    Card: cardTheme,
-    Progress: progressTheme,
-    Link: linkTheme,
-    Avatar: avatarTheme,
-  },
-}) as Theme;
-
-export default theme;
+  theme,
+) as Theme;

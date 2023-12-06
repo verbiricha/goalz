@@ -13,4 +13,4 @@ const baseStyle = definePartsStyle({
   },
 });
 
-export const progressTheme = defineMultiStyleConfig({ baseStyle });
+export default defineMultiStyleConfig({ baseStyle });

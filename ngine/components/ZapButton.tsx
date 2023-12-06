@@ -15,7 +15,8 @@ export default function ZapButton({ pubkey, event, ...rest }: ZapButtonProps) {
   return (
     <>
       <Button
-        variant="contrast"
+        variant="solid"
+        colorScheme="brand"
         leftIcon={<Icon boxSize={4} as={ZapCircle} />}
         size="sm"
         onClick={onOpen}

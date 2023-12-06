@@ -12,4 +12,4 @@ const baseStyle = definePartsStyle({
   },
 });
 
-export const avatarTheme = defineMultiStyleConfig({ baseStyle });
+export default defineMultiStyleConfig({ baseStyle });

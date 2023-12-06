@@ -30,11 +30,6 @@ import ZapModal from "@ngine/components/ZapModal";
 
 import { GOAL } from "@goalz/const";
 import { GoalCard } from "@goalz/components/Goal";
-import ProfileStats from "@goalz/components/ProfileStats";
-import Contributions from "@goalz/components/Contributions";
-import Funded from "@goalz/components/Funded";
-
-import useGoals from "@goalz/hooks/useGoals";
 
 interface ProfileProps {
   pubkey: string;
@@ -171,28 +166,18 @@ function Goals({ events }: GoalsProps) {
 }
 
 interface ProfileTabsProps {
-  pubkey: string;
   events: NDKEvent[];
 }
 
-function ProfileTabs({ pubkey, events }: ProfileTabsProps) {
-  const { goals, zaps } = useGoals();
+function ProfileTabs({ events }: ProfileTabsProps) {
   return (
     <Tabs variant="soft-rounded" colorScheme="gray" size="sm" mt={2}>
       <TabList>
         <Tab>Goals</Tab>
-        <Tab>Contributions</Tab>
-        <Tab>Funded</Tab>
       </TabList>
       <TabPanels>
         <TabPanel px={0}>
           <Goals events={events} />
-        </TabPanel>
-        <TabPanel px={0}>
-          <Contributions goals={goals} zaps={zaps} pubkey={pubkey} />
-        </TabPanel>
-        <TabPanel px={0}>
-          <Funded goals={goals} zaps={zaps} pubkey={pubkey} />
         </TabPanel>
       </TabPanels>
     </Tabs>
@@ -228,9 +213,8 @@ export default function Profile({ pubkey }: ProfileProps) {
       )}
       <NPub pubkey={pubkey} />
       {shouldShowNsec && session?.privkey && <NSec privkey={session.privkey} />}
-      <ProfileStats pubkey={pubkey} />
 
-      <ProfileTabs pubkey={pubkey} events={events} />
+      <ProfileTabs events={events} />
     </Stack>
   );
 }

@@ -17,6 +17,7 @@ export default function FeaturedGoals({ events }: FeaturedGoalsProps) {
         sx={{
           overflowX: "scroll",
           flexWrap: "nowrap",
+          scrollbarWidth: "none",
           "-webkit-overflow-scrolling": "touch",
           "&::-webkit-scrollbar": {
             display: "none",

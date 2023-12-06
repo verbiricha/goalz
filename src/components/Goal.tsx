@@ -36,8 +36,9 @@ import {
   ZapButton,
   FormattedRelativeTime,
   Reactions,
-  EventMenu,
   Markdown,
+  EventProps,
+  EventMenu,
 } from "@ngine/react";
 import useEvent from "@ngine/nostr/useEvent";
 import useEvents from "@ngine/nostr/useEvents";
@@ -192,11 +193,13 @@ export function Beneficiaries({ event, zaps }: BeneficiariesProps) {
   ) : null;
 }
 
-interface GoalCardProps extends CardProps {
-  event: NDKEvent;
-}
+interface GoalCardProps extends EventProps, CardProps {}
 
-export function GoalCard({ event, ...rest }: GoalCardProps) {
+export function GoalCard({
+  event,
+  showReactions = true,
+  ...rest
+}: GoalCardProps) {
   const {
     link,
     title,
@@ -291,32 +294,39 @@ export function GoalCard({ event, ...rest }: GoalCardProps) {
           {href && <ExternalLink href={href} />}
           <Raised latest={latest} goal={goal} raised={total} />
           <Beneficiaries event={event} zaps={zapRequests} />
+          <Stack gap={4} w="100%">
+            <HStack align="center" justifyContent="space-between">
+              <AvatarGroup size="sm" max={5} spacing="-0.4em">
+                {zappers.map((pubkey) => (
+                  <Avatar key={pubkey} pubkey={pubkey} />
+                ))}
+              </AvatarGroup>
+              <ZapButton
+                variant="contrast"
+                pubkey={event.pubkey}
+                event={event}
+              />
+            </HStack>
+          </Stack>
         </Stack>
       </CardBody>
-      <CardFooter>
-        <Stack w="100%">
-          <HStack align="center" justifyContent="space-between">
-            <AvatarGroup size="sm" max={5} spacing="-0.4em">
-              {zappers.map((pubkey) => (
-                <Avatar key={pubkey} pubkey={pubkey} />
-              ))}
-            </AvatarGroup>
-            <ZapButton pubkey={event.pubkey} event={event} />
-          </HStack>
-          <HStack align="center" justifyContent="space-between">
+      {showReactions && (
+        <CardFooter>
+          <HStack align="center" justifyContent="space-between" w="100%">
             <Reactions
               event={event}
-              kinds={[
-                NDKKind.GenericRepost, // NDKKind.Reaction
-              ]}
+              reactions={[NDKKind.GenericRepost, NDKKind.Reaction]}
               components={{
                 [GOAL]: GoalCard,
               }}
             />
-            <EventMenu event={event} />
+            <EventMenu
+              event={event}
+              reactions={[NDKKind.GenericRepost, NDKKind.Reaction]}
+            />
           </HStack>
-        </Stack>
-      </CardFooter>
+        </CardFooter>
+      )}
     </Card>
   );
 }
@@ -506,7 +516,7 @@ export function GoalDetail({ event }: GoalDetailProps) {
               );
             })}
       </Flex>
-      <ZapButton pubkey={event.pubkey} event={event} />
+      <ZapButton variant="contrast" pubkey={event.pubkey} event={event} />
     </Flex>
   );
 }

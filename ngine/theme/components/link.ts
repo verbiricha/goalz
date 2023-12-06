@@ -20,7 +20,7 @@ const nav = defineStyle({
   },
 });
 
-export const linkTheme = defineStyleConfig({
+export default defineStyleConfig({
   defaultProps: { variant: "brand" },
   variants: { brand, nav },
 });

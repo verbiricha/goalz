@@ -77,24 +77,31 @@ export interface ZapsSummary {
   total: number;
 }
 
+export function parseZap(z: NDKEvent): ZapRequest | null {
+  const zr = getZapRequest(z);
+  if (!zr) {
+    return null;
+  }
+  const eTag = zr ? zr.tags.find((t) => t[0] === "e") : null;
+  const e = eTag ? eTag[1] : undefined;
+  const pTag = zr ? zr.tags.find((t) => t[0] === "p") : null;
+  const p = pTag ? pTag[1] : undefined;
+  const relaysTag = zr ? zr.tags.find((t) => t[0] === "relays") || [] : [];
+  return {
+    ...getZapRequest(z),
+    amount: getZapAmount(z),
+    e,
+    p,
+    relays: relaysTag.slice(1),
+  } as ZapRequest;
+}
+
 export function zapsSummary(zaps: NDKEvent[]): ZapsSummary {
   const zapRequests = zaps
-    .map((z) => {
-      const zr = getZapRequest(z);
-      const eTag = zr ? zr.tags.find((t) => t[0] === "e") : null;
-      const e = eTag ? eTag[1] : undefined;
-      const pTag = zr ? zr.tags.find((t) => t[0] === "p") : null;
-      const p = pTag ? pTag[1] : undefined;
-      const relaysTag = zr ? zr.tags.find((t) => t[0] === "relays") || [] : [];
-      return {
-        ...getZapRequest(z),
-        amount: getZapAmount(z),
-        e,
-        p,
-        relays: relaysTag.slice(1),
-      } as ZapRequest;
-    })
-    .sort((a, b) => b.amount - a.amount);
+    .map(parseZap)
+    .filter((z) => z !== null)
+    // @ts-ignore
+    .sort((a, b) => b.amount - a.amount) as ZapRequest[];
   const total = zapRequests.reduce((acc, { amount }) => {
     return acc + amount;
   }, 0);

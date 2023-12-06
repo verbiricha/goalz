@@ -4,9 +4,14 @@ import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(cardAnatomy.keys);
 
-const goal = definePartsStyle({
+const note = definePartsStyle({
   container: {
     boxShadow: "md",
+    w: "100%",
+    maxW: "410px",
+  },
+  header: {
+    paddingBottom: 0,
   },
   body: {
     paddingY: "20px",
@@ -17,4 +22,4 @@ const goal = definePartsStyle({
   },
 });
 
-export default defineMultiStyleConfig({ variants: { goal } });
+export default defineMultiStyleConfig({ variants: { note } });

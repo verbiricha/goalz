@@ -1,3 +1,4 @@
+export * from "./Brackets";
 export * from "./ZapCircle";
 export * from "./FaceContent";
 export * from "./EyeOff";
