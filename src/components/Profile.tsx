@@ -195,7 +195,7 @@ export default function Profile({ pubkey }: ProfileProps) {
   });
   return (
     <Stack w="100%" gap={3}>
-      {profile?.banner && <Image src={profile.banner} />}
+      {profile?.banner && <Image src={profile.banner} h="236px" />}
       <Flex align="center" justify="space-between">
         <HStack>
           <Avatar pubkey={pubkey} size={{ base: "sm", md: "lg" }} />
