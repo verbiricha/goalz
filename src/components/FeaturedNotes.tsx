@@ -31,7 +31,7 @@ export default function FeaturedNotes() {
       <HStack
         align="flex-start"
         justify="center"
-        w={{ base: "xs", sm: "sm", xl: "6xl" }}
+        w={{ base: "xs", sm: "md", lg: "4xl", xl: "6xl" }}
         gap={4}
         wrap="wrap"
       >

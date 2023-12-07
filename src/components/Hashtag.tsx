@@ -19,7 +19,7 @@ export default function Hashtag({ tag }: HashtagProps) {
       <Heading fontSize="3xl">#{tag}</Heading>
       <Stack align="center" gap={4}>
         {events.map((e) => (
-          <GoalCard key={e.id} event={e} />
+          <GoalCard w="100%" key={e.id} event={e} />
         ))}
       </Stack>
       {eose && events.length === 0 && <Text>No goals found</Text>}

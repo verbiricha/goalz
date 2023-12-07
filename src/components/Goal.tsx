@@ -91,8 +91,8 @@ function useGoalInfo(event: NDKEvent): GoalInfo {
     return event.tagValue("summary");
   }, [event.id]);
   const image = useMemo(() => {
-    return event.tagValue("image") || profile?.image;
-  }, [event.id, profile?.image]);
+    return event.tagValue("image") || profile?.banner || profile?.image;
+  }, [event.id, profile]);
   const relays = useMemo(() => {
     const rs = event.getMatchingTags("relays");
     if (rs.length === 0) return DEFAULT_RELAYS;
@@ -247,7 +247,7 @@ export function GoalCard({
       .map((c) => c[0]);
   }, [zapRequests]);
   return (
-    <Card variant="goal" w={{ base: "xs", md: "sm" }} {...rest}>
+    <Card variant="goal" {...rest}>
       <Box cursor="pointer" position="relative" onClick={() => navigate(link)}>
         {image && (
           <>
@@ -331,11 +331,9 @@ export function GoalCard({
   );
 }
 
-interface GoalDetailProps extends CardProps {
-  event: NDKEvent;
-}
+interface GoalDetailProps extends EventProps, CardProps {}
 
-export function GoalDetail({ event }: GoalDetailProps) {
+export function GoalDetail({ event, showReactions = true }: GoalDetailProps) {
   const currency = useCurrency();
   const {
     link,
@@ -425,10 +423,16 @@ export function GoalDetail({ event }: GoalDetailProps) {
         )}
       </Link>
       <Stack gap={2}>
-        <Heading cursor="pointer" size="md" onClick={() => navigate(link)}>
-          {title}
-        </Heading>
-        <User pubkey={event.pubkey} />
+        <HStack align="flex-start" justify="space-between">
+          <Stack gap={0}>
+            <Heading cursor="pointer" size="md" onClick={() => navigate(link)}>
+              {title}
+            </Heading>
+            <User size="sm" pubkey={event.pubkey} />
+          </Stack>
+
+          <ZapButton variant="contrast" pubkey={event.pubkey} event={event} />
+        </HStack>
         {description && <Markdown fontSize="sm" content={description} />}
         <HStack wrap="wrap">
           {tags.map((t) => (
@@ -516,7 +520,21 @@ export function GoalDetail({ event }: GoalDetailProps) {
               );
             })}
       </Flex>
-      <ZapButton variant="contrast" pubkey={event.pubkey} event={event} />
+      {showReactions && (
+        <HStack align="center" justifyContent="space-between" w="100%">
+          <Reactions
+            event={event}
+            reactions={[NDKKind.GenericRepost, NDKKind.Reaction]}
+            components={{
+              [GOAL]: GoalCard,
+            }}
+          />
+          <EventMenu
+            event={event}
+            reactions={[NDKKind.GenericRepost, NDKKind.Reaction]}
+          />
+        </HStack>
+      )}
     </Flex>
   );
 }

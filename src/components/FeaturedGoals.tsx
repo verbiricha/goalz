@@ -25,7 +25,12 @@ export default function FeaturedGoals({ events }: FeaturedGoalsProps) {
         }}
       >
         {events.map((ev) => (
-          <GoalCard key={ev.id} event={ev} flex="0 0 auto" />
+          <GoalCard
+            w={{ base: "xs", md: "sm" }}
+            key={ev.id}
+            event={ev}
+            flex="0 0 auto"
+          />
         ))}
       </HStack>
     </Flex>
