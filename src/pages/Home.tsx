@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { Stack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
 
 import CallToAction from "@goalz/components/CallToAction";
-import OrbitingGoals from "@goalz/components/OrbitingGoals";
 import FeaturedGoals from "@goalz/components/FeaturedGoals";
 import Features from "@goalz/components/Features";
 import Support from "@goalz/components/Support";
@@ -22,24 +22,28 @@ export default function Home() {
   const [session] = useSession();
   const isLoggedOut = session === null;
   const { events: supporters } = useSupporters(HEYA_PUBKEY);
-  const { id, events, eose } = useEvents([
+  const { events } = useEvents(
+    [
+      {
+        kinds: [GOAL],
+        ids: [
+          "bd3b899997cd4ce115532a84eabe598bb7547cab8f44b06812b2306d64761096",
+          "9b734bc67402c034857ec3f2ecd8e74d61d38f46505067c5e53986cf70a0c4f6",
+          "060f4f06455ee0a87db48f7d5f23b532bcc133cea7dd3bc9f2a20226f1bf2705",
+        ],
+      },
+      {
+        kinds: [GOAL],
+        authors: supporters.map((ev) => ev.pubkey),
+      },
+    ],
     {
-      kinds: [GOAL],
-      ids: [
-        "bd3b899997cd4ce115532a84eabe598bb7547cab8f44b06812b2306d64761096",
-        "9b734bc67402c034857ec3f2ecd8e74d61d38f46505067c5e53986cf70a0c4f6",
-        "060f4f06455ee0a87db48f7d5f23b532bcc133cea7dd3bc9f2a20226f1bf2705",
-      ],
+      cacheUsage: NDKSubscriptionCacheUsage.PARALLEL,
     },
-    {
-      kinds: [GOAL],
-      authors: supporters.map((ev) => ev.pubkey),
-    },
-  ]);
+  );
   const featuredGoals = useMemo(() => {
     return dedupeByPubkey(events);
   }, [events]);
-  const showAnimation = eose;
 
   function createZapGoal() {
     navigate(NEW_GOAL);
@@ -47,9 +51,7 @@ export default function Home() {
 
   return (
     <Stack align="center" spacing={20} mt={12}>
-      {showAnimation && <OrbitingGoals key={id} events={featuredGoals} />}
       <CallToAction
-        mt={showAnimation ? "-12em" : "0"}
         label="Lightning Fundraisers"
         title="Empower Dreams"
         description="Fund causes and goals with lightning. Heya! fundraising is instantly available without any fees."

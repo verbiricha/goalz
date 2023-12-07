@@ -40,7 +40,7 @@ function GoalsFeed({ authors }: GoalsFeedProps) {
     <Stack gap={4} w="100%">
       <Stack align="center" direction="row" justify="space-between">
         <Heading fontSize="3xl">Contacts</Heading>
-        <AvatarGroup size="sm" max={5} spacing="-0.4em">
+        <AvatarGroup size="sm" max={3} spacing="-0.4em">
           {authors.map((pubkey) => (
             <Avatar key={pubkey} pubkey={pubkey} />
           ))}
