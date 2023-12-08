@@ -11,7 +11,6 @@ import { NDKKind } from "@nostr-dev-kit/ndk";
 
 import {
   User,
-  EventMenu,
   Markdown,
   Reactions,
   EventProps,
@@ -46,18 +45,15 @@ export default function Note({
         </HStack>
       </CardHeader>
       <CardBody>
-        <Markdown content={event.content} components={components} />
+        <Markdown
+          content={event.content}
+          components={components}
+          tags={event.tags}
+        />
       </CardBody>
       {showReactions && (
         <CardFooter>
-          <HStack align="center" justify="space-between" w="100%">
-            <Reactions
-              reactions={reactions}
-              event={event}
-              components={components}
-            />
-            <EventMenu event={event} reactions={reactions} />
-          </HStack>
+          <Reactions kinds={reactions} event={event} components={components} />
         </CardFooter>
       )}
     </Card>

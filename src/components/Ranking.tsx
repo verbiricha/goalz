@@ -15,8 +15,7 @@ import Amount from "@ngine/components/Amount";
 import { useRanking } from "@ngine/nostr/nip57";
 
 import useGoals from "@goalz/hooks/useGoals";
-import Trophy from "@goalz/icons/Trophy";
-import Medal from "@goalz/icons/Medal";
+import { Trophy, Medal } from "@goalz/icons";
 
 const n = 9;
 

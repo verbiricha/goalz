@@ -1,4 +1,4 @@
-import { useMemo, ReactNode } from "react";
+import { ReactNode } from "react";
 import {
   HStack,
   Icon,
@@ -19,9 +19,9 @@ import {
 } from "@chakra-ui/react";
 import { NDKKind } from "@nostr-dev-kit/ndk";
 
-import { useReactions, Amount, User, EventProps } from "@ngine/react";
+import { Amount, User, ReactionEvents, EventProps } from "@ngine/react";
 import { Repost as RepostIcon, Heart } from "@ngine/icons";
-import { zapsSummary, ZapRequest } from "@ngine/nostr/nip57";
+import { ZapRequest } from "@ngine/nostr/nip57";
 
 function Zap({ zap }: { zap: ZapRequest }) {
   return (
@@ -48,7 +48,7 @@ function Like({ event }: EventProps) {
       {customEmoji ? (
         <Image boxSize={5} src={customEmoji[2]} />
       ) : !["+", "-"].includes(emoji) ? (
-        <Text fontSize="xl">{emoji}</Text>
+        <Text fontSize="lg">{emoji}</Text>
       ) : (
         <Icon as={Heart} boxSize={5} />
       )}
@@ -84,35 +84,33 @@ function ReactionsList({ children }: { children: ReactNode }) {
   );
 }
 
-interface ReactionModalProps extends EventProps {
+interface ReactionModalProps {
   isOpen: boolean;
   onClose(): void;
-  reactions: NDKKind[];
+  kinds: NDKKind[];
+  events: ReactionEvents;
 }
 
 export default function ReactionModal({
-  event,
   isOpen,
-  reactions: reactionKinds,
+  events,
+  kinds,
   onClose,
 }: ReactionModalProps) {
-  const { events, zaps, reposts, reactions } = useReactions(
-    event,
-    reactionKinds,
-  );
-  const { zapRequests } = useMemo(() => zapsSummary(zaps), [zaps]);
+  const { zaps, reposts, reactions } = events;
+  const { zapRequests } = zaps;
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Reactions ({events.length})</ModalHeader>
+        <ModalHeader>Reactions ({events.events.length})</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Tabs variant="soft-rounded" colorScheme="brand">
             <TabList>
-              {reactionKinds.map((k) => {
+              {kinds.map((k) => {
                 if (k === NDKKind.Zap) {
-                  return <Tab>Zaps ({zaps.length})</Tab>;
+                  return <Tab>Zaps ({zapRequests.length})</Tab>;
                 }
                 if (k === NDKKind.Reaction) {
                   return <Tab>Likes ({reactions.length})</Tab>;
@@ -125,7 +123,7 @@ export default function ReactionModal({
             </TabList>
 
             <TabPanels>
-              {reactionKinds.map((k) => {
+              {kinds.map((k) => {
                 if (k === NDKKind.Zap) {
                   return (
                     <TabPanel>

@@ -1,6 +1,6 @@
 import type { IconProps } from "@ngine/icons/props";
 
-export default function Trophy(props: IconProps) {
+export function Trophy(props: IconProps) {
   return (
     <svg
       width="24"

@@ -4,16 +4,18 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { nip19 } from "nostr-tools";
 
-import Username from "./Username";
-import NEvent from "./NEvent";
-import NAddr from "./NAddr";
 import {
   useLinks,
   useLinkComponent,
+  NEvent,
+  NAddr,
+  Username,
   Links,
   LinkComponent,
-} from "@ngine/context";
-import { Fragment, Components } from "@ngine/types";
+  Tags,
+  Fragment,
+  Components,
+} from "@ngine/react";
 
 // eslint-disable-next-line no-useless-escape
 const FileExtensionRegex = /\.([\w]+)$/i;
@@ -285,7 +287,34 @@ function extractHashtags(
     .flat();
 }
 
+function extractCustomEmoji(fragments: Fragment[], tags: Tags) {
+  return fragments
+    .map((f) => {
+      if (typeof f === "string") {
+        return f.split(/:(\w+):/g).map((i) => {
+          const t = tags.find((a) => a[0] === "emoji" && a[1] === i);
+          if (t) {
+            return (
+              <Image
+                borderRadius="none"
+                display="inline"
+                fit="contain"
+                src={t[2]}
+                boxSize={5}
+              />
+            );
+          } else {
+            return i;
+          }
+        });
+      }
+      return f;
+    })
+    .flat();
+}
+
 function transformText(
+  tags: Tags,
   fragments: Fragment[],
   components: Components,
   links: Links,
@@ -297,6 +326,7 @@ function transformText(
   result = extractNoteIds(result, components);
   result = extractHashtags(result, links, Link);
   result = extractNaddrs(result, components);
+  result = extractCustomEmoji(result, tags);
 
   return result;
 }
@@ -304,11 +334,13 @@ function transformText(
 interface MarkdownProps extends StackProps {
   content: string;
   components?: Components;
+  tags?: Tags;
 }
 
 export default function Markdown({
   content,
   components,
+  tags = [],
   ...rest
 }: MarkdownProps) {
   const Link = useLinkComponent();
@@ -319,6 +351,7 @@ export default function Markdown({
         return (
           <p dir="auto">
             {transformText(
+              tags,
               [children],
               components ?? ({} as Components),
               links,
@@ -331,6 +364,7 @@ export default function Markdown({
         return (
           <li>
             {transformText(
+              tags,
               [children],
               components ?? ({} as Components),
               links,

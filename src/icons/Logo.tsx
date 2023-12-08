@@ -1,5 +1,4 @@
-// todo: move out of ngine
-import type { IconProps } from "./props";
+import type { IconProps } from "@ngine/icons/props";
 
 export function Logo(props: IconProps) {
   return (

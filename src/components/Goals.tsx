@@ -1,14 +1,12 @@
 import { useMemo } from "react";
 import { useAtomValue } from "jotai";
-import { Stack, Heading, Text, AvatarGroup } from "@chakra-ui/react";
+import { Stack, Heading, Text } from "@chakra-ui/react";
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 
 import { GoalCard } from "@goalz/components/Goal";
 import { GOAL } from "@goalz/const";
 
-import useEvents from "@ngine/nostr/useEvents";
-import Avatar from "@ngine/components/Avatar";
-import { contactsAtom } from "@ngine/state";
+import { useEvents, contactsAtom, People } from "@ngine/react";
 
 interface GoalsFeedProps {
   authors: string[];
@@ -40,11 +38,7 @@ function GoalsFeed({ authors }: GoalsFeedProps) {
     <Stack gap={4} w="100%">
       <Stack align="center" direction="row" justify="space-between">
         <Heading fontSize="3xl">Contacts</Heading>
-        <AvatarGroup size="sm" max={3} spacing="-0.4em">
-          {authors.map((pubkey) => (
-            <Avatar key={pubkey} pubkey={pubkey} />
-          ))}
-        </AvatarGroup>
+        <People pubkeys={authors} size="sm" max={3} spacing="-0.4em" />
       </Stack>
       <Stack align="center" gap={4}>
         {events.map((e) => (

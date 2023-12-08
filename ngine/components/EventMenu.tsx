@@ -8,16 +8,17 @@ import {
 } from "@chakra-ui/react";
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 
-import { useFeedback, ReactionModal } from "@ngine/react";
+import { useFeedback, ReactionEvents, ReactionModal } from "@ngine/react";
 import { Copy, Dots, Brackets, Heart } from "@ngine/icons";
 import useCopy from "@ngine/hooks/useCopy";
 
 interface EventMenuProps {
   event: NDKEvent;
-  reactions: NDKKind[];
+  kinds: NDKKind[];
+  events: ReactionEvents;
 }
 
-export default function EventMenu({ event, reactions }: EventMenuProps) {
+export default function EventMenu({ event, kinds, events }: EventMenuProps) {
   const { success, error } = useFeedback();
   const copy = useCopy();
   const reactionsModal = useDisclosure();
@@ -59,7 +60,7 @@ export default function EventMenu({ event, reactions }: EventMenuProps) {
           </MenuItem>
         </MenuList>
       </Menu>
-      <ReactionModal event={event} reactions={reactions} {...reactionsModal} />
+      <ReactionModal kinds={kinds} events={events} {...reactionsModal} />
     </>
   );
 }

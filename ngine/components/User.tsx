@@ -15,6 +15,7 @@ function shortenPubkey(pk: string) {
   return `${pk.slice(0, 8)}`;
 }
 
+// todo: tags on profile for custom emoji
 export default function User({ pubkey, ...rest }: UserProps) {
   const Link = useLinkComponent();
   const npub = useMemo(() => {

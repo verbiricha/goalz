@@ -51,11 +51,12 @@ export default function useEvents(
           : undefined;
       const sub = ndk.subscribe(filter, opts, relaySet);
       sub.on("event", (ev: NDKEvent) => {
-        setEvents((evs) =>
-          uniqBy(evs.concat([ev]), (e: NDKEvent) => e.id).sort(
-            (a, b) => (b.created_at ?? 0) - (a.created_at ?? 0),
-          ),
-        );
+        setEvents((evs) => {
+          const newEvents = evs
+            .concat([ev])
+            .sort((a, b) => (b.created_at ?? 0) - (a.created_at ?? 0));
+          return uniqBy(newEvents, (e: NDKEvent) => e.tagId());
+        });
       });
       sub.on("eose", () => {
         setEose(true);

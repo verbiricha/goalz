@@ -37,10 +37,10 @@ import { useAtomValue } from "jotai";
 
 import { SUPPORT, HEYA_PUBKEY } from "@goalz/const";
 import useSupporters from "@goalz/hooks/useSupporters";
+import { HeartHand } from "@goalz/icons";
 
 import Avatar from "@ngine/components/Avatar";
 import LnInvoice from "@ngine/components/LnInvoice";
-import { HeartHand } from "@ngine/icons";
 import { unixNow } from "@ngine/time";
 import useProfile from "@ngine/nostr/useProfile";
 import useSession from "@ngine/hooks/useSession";

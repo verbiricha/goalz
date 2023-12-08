@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useAtomValue } from "jotai";
 import {
-  useToast,
   Flex,
   Box,
   HStack,
@@ -34,20 +33,29 @@ import { generatePrivateKey, getPublicKey } from "nostr-tools";
 import { NDKEvent, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import("@getalby/bitcoin-connect-react"); // enable NWC
 
-import User from "@ngine/components/User";
-import QrCode from "@ngine/components/QrCode";
-import Amount from "@ngine/components/Amount";
-import InputCopy from "@ngine/components/InputCopy";
-import useRelays from "@ngine/hooks/useRelays";
-import useSession from "@ngine/hooks/useSession";
-import useProfile from "@ngine/nostr/useProfile";
-import useProfiles from "@ngine/nostr/useProfiles";
-import { useLnurl, useLnurls, loadInvoice } from "@ngine/lnurl";
-import { useSign } from "@ngine/context";
-import { convertSatsToFiat } from "@ngine/money";
-import type { Currency, Rates } from "@ngine/money";
-import { currencyAtom, ratesAtom } from "@ngine/state";
-import { makeZapRequest, getZapSplits, ZapSplit } from "@ngine/nostr/nip57";
+import {
+  useFeedback,
+  useRelays,
+  useSession,
+  useProfile,
+  useProfiles,
+  useSign,
+  useLnurl,
+  useLnurls,
+  loadInvoice,
+  currencyAtom,
+  ratesAtom,
+  convertSatsToFiat,
+  makeZapRequest,
+  getZapSplits,
+  User,
+  Amount,
+  QrCode,
+  InputCopy,
+  Currency,
+  Rates,
+  ZapSplit,
+} from "@ngine/react";
 
 function valueToEmoji(sats: number) {
   if (sats < 420) {
@@ -213,7 +221,7 @@ function SingleZapModal({
   rates,
 }: ZapModalProps) {
   const sign = useSign();
-  const toast = useToast();
+  const { success, error } = useFeedback();
   const [relays] = useRelays();
   const profile = useProfile(pubkey);
   const [amount, setAmount] = useState(defaultZapAmount);
@@ -273,10 +281,7 @@ function SingleZapModal({
       const zr = await zapRequest(sk);
       const invoice = await loadInvoice(lnurl, amount, comment, zr);
       if (!invoice?.pr) {
-        toast({
-          title: "Could not get invoice",
-          status: "error",
-        });
+        error("Could not get invoice");
         return;
       }
       // fimxe
@@ -287,11 +292,7 @@ function SingleZapModal({
           await window.webln.enable();
           // @ts-ignore
           await window.webln.sendPayment(invoice.pr);
-          toast({
-            title: "⚡️ Zapped",
-            description: `${amount} sats sent`,
-            status: "success",
-          });
+          success(`${amount} sats sent`);
           closeModal();
         } catch (error) {
           console.error(error);
@@ -302,12 +303,9 @@ function SingleZapModal({
           setInvoice(invoice.pr);
         }
       }
-    } catch (error) {
-      console.error(error);
-      toast({
-        title: "Could not get invoice",
-        status: "error",
-      });
+    } catch (e) {
+      console.error(e);
+      error("Could not get invoice");
     } finally {
       setIsFetchingInvoice(false);
     }
@@ -427,7 +425,7 @@ function MultiZapModal({
   rates,
 }: MultiZapModalProps) {
   const sign = useSign();
-  const toast = useToast();
+  const { success, error } = useFeedback();
   const [relays] = useRelays();
   const pubkeys = useMemo(() => {
     return zapSplits.map((z) => z.pubkey);
@@ -499,10 +497,7 @@ function MultiZapModal({
       const hasFetchedInvoices = fetchedInvoices.every((i) => i?.pr);
 
       if (!hasFetchedInvoices) {
-        toast({
-          title: "Could not get invoices",
-          status: "error",
-        });
+        error("Could not get invoices");
         return;
       }
 
@@ -515,11 +510,7 @@ function MultiZapModal({
             // @ts-ignore
             await window.webln.sendPayment(i.pr);
           }
-          toast({
-            title: "⚡️ Zapped",
-            description: `${amount} sats sent`,
-            status: "success",
-          });
+          success(`${amount} sats sent`);
           closeModal();
         } catch (error) {
           console.error(error);
@@ -528,12 +519,9 @@ function MultiZapModal({
       } else {
         setInvoices(fetchedInvoices.map((i) => i.pr));
       }
-    } catch (error) {
-      console.error(error);
-      toast({
-        title: "Could not get invoices",
-        status: "error",
-      });
+    } catch (e) {
+      console.error(e);
+      error("Could not get invoices");
     } finally {
       setIsFetchingInvoices(false);
     }

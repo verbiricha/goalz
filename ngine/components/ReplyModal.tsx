@@ -52,6 +52,7 @@ export default function ReplyModal({
   const [isBusy, setIsBusy] = useState(false);
   const { success, error } = useFeedback();
   const [isPreview, setIsPreview] = useState(false);
+  // fixme: not always all selected by default
   const pTags = useMemo(() => {
     return [
       event.pubkey,

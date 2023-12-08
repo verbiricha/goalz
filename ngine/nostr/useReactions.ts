@@ -6,9 +6,24 @@ import {
   NDKSubscriptionCacheUsage,
 } from "@nostr-dev-kit/ndk";
 
+import { zapsSummary, ZapRequest } from "@ngine/nostr/nip57";
 import useEvents from "./useEvents";
 
-export default function useReactions(event: NDKEvent, kinds: NDKKind[]) {
+export type ReactionEvents = {
+  events: NDKEvent[];
+  zaps: {
+    zapRequests: ZapRequest[];
+    total: number;
+  };
+  reactions: NDKEvent[];
+  replies: NDKEvent[];
+  reposts: NDKEvent[];
+};
+
+export function useReactions(
+  event: NDKEvent,
+  kinds: NDKKind[],
+): ReactionEvents {
   const [t, id] = useMemo(() => event.tagReference(), [event]);
   const filter = useMemo(() => {
     return {
@@ -24,6 +39,7 @@ export default function useReactions(event: NDKEvent, kinds: NDKKind[]) {
     () => events.filter((e) => e.kind === NDKKind.Zap),
     [events],
   );
+  const { zapRequests, total } = useMemo(() => zapsSummary(zaps), [zaps]);
   const reactions = useMemo(
     () => events.filter((e) => e.kind === NDKKind.Reaction),
     [events],
@@ -39,5 +55,14 @@ export default function useReactions(event: NDKEvent, kinds: NDKKind[]) {
       ),
     [events],
   );
-  return { events, zaps, reactions, replies, reposts };
+  return {
+    events,
+    zaps: {
+      zapRequests,
+      total,
+    },
+    reactions,
+    replies,
+    reposts,
+  };
 }

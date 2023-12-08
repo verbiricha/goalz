@@ -1,4 +1,4 @@
-import type { IconProps } from "./props";
+import type { IconProps } from "@ngine/icons/props";
 
 export function Close(props: IconProps) {
   return (

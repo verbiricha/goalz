@@ -19,3 +19,6 @@ export interface EventProps {
   components?: Components;
   showReactions?: boolean;
 }
+
+export type Tag = string[];
+export type Tags = Tag[];

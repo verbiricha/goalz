@@ -16,7 +16,6 @@ import {
   HeadingProps,
   Text,
   Progress,
-  AvatarGroup,
   Tag,
   TagLabel,
   Button,
@@ -27,10 +26,8 @@ import { NDKKind, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
 import type { NDKEvent } from "@nostr-dev-kit/ndk";
 import { useAtomValue } from "jotai";
 
-import { Image as ImageIcon } from "@ngine/icons";
 import {
   User,
-  Avatar,
   Amount,
   Event,
   ZapButton,
@@ -38,7 +35,7 @@ import {
   Reactions,
   Markdown,
   EventProps,
-  EventMenu,
+  People,
 } from "@ngine/react";
 import useEvent from "@ngine/nostr/useEvent";
 import useEvents from "@ngine/nostr/useEvents";
@@ -54,6 +51,7 @@ import { useLinkComponent, useLink } from "@ngine/context";
 
 import Link from "@goalz/components/Link";
 import ExternalLink from "@goalz/components/ExternalLink";
+import { Image as ImageIcon } from "@goalz/icons";
 import { GOAL, DEFAULT_RELAYS } from "@goalz/const";
 
 function useCurrency() {
@@ -283,7 +281,9 @@ export function GoalCard({
             {title}
           </Heading>
           <User pubkey={event.pubkey} />
-          {description && <Markdown fontSize="sm" content={description} />}
+          {description && (
+            <Markdown fontSize="sm" content={description} tags={event.tags} />
+          )}
           <HStack wrap="wrap">
             {tags.map((t) => (
               <Tag size="sm" variant="subtle">
@@ -296,11 +296,7 @@ export function GoalCard({
           <Beneficiaries event={event} zaps={zapRequests} />
           <Stack gap={4} w="100%">
             <HStack align="center" justifyContent="space-between">
-              <AvatarGroup size="sm" max={3} spacing="-0.4em">
-                {zappers.map((pubkey) => (
-                  <Avatar key={pubkey} pubkey={pubkey} />
-                ))}
-              </AvatarGroup>
+              <People size="sm" max={3} spacing="-0.4em" pubkeys={zappers} />
               <ZapButton
                 variant="contrast"
                 pubkey={event.pubkey}
@@ -312,19 +308,13 @@ export function GoalCard({
       </CardBody>
       {showReactions && (
         <CardFooter>
-          <HStack align="center" justifyContent="space-between" w="100%">
-            <Reactions
-              event={event}
-              reactions={[NDKKind.GenericRepost, NDKKind.Reaction]}
-              components={{
-                [GOAL]: GoalCard,
-              }}
-            />
-            <EventMenu
-              event={event}
-              reactions={[NDKKind.GenericRepost, NDKKind.Reaction]}
-            />
-          </HStack>
+          <Reactions
+            event={event}
+            kinds={[NDKKind.GenericRepost, NDKKind.Reaction]}
+            components={{
+              [GOAL]: GoalCard,
+            }}
+          />
         </CardFooter>
       )}
     </Card>
@@ -433,7 +423,9 @@ export function GoalDetail({ event, showReactions = true }: GoalDetailProps) {
 
           <ZapButton variant="contrast" pubkey={event.pubkey} event={event} />
         </HStack>
-        {description && <Markdown fontSize="sm" content={description} />}
+        {description && (
+          <Markdown fontSize="sm" content={description} tags={event.tags} />
+        )}
         <HStack wrap="wrap">
           {tags.map((t) => (
             <Tag size="sm" variant="subtle">
@@ -521,19 +513,13 @@ export function GoalDetail({ event, showReactions = true }: GoalDetailProps) {
             })}
       </Flex>
       {showReactions && (
-        <HStack align="center" justifyContent="space-between" w="100%">
-          <Reactions
-            event={event}
-            reactions={[NDKKind.GenericRepost, NDKKind.Reaction]}
-            components={{
-              [GOAL]: GoalCard,
-            }}
-          />
-          <EventMenu
-            event={event}
-            reactions={[NDKKind.GenericRepost, NDKKind.Reaction]}
-          />
-        </HStack>
+        <Reactions
+          event={event}
+          kinds={[NDKKind.GenericRepost, NDKKind.Reaction]}
+          components={{
+            [GOAL]: GoalCard,
+          }}
+        />
       )}
     </Flex>
   );

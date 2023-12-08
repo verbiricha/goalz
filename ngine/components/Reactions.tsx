@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import {
   useColorModeValue,
   useDisclosure,
@@ -16,6 +15,8 @@ import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import {
   useSession,
   useReactions,
+  EventMenu,
+  ReactionEvents,
   RepostModal,
   ReplyModal,
   ReactionPicker,
@@ -23,7 +24,7 @@ import {
   EventProps,
 } from "@ngine/react";
 import { Zap, Heart, Reply, Repost } from "@ngine/icons";
-import { zapsSummary, ZapRequest } from "@ngine/nostr/nip57";
+import { ZapRequest } from "@ngine/nostr/nip57";
 
 const defaultReactions = [NDKKind.Zap, NDKKind.Reaction];
 
@@ -49,7 +50,7 @@ function ReactionCount({ icon, count, reaction, ...rest }: ReactionCountProps) {
       {customEmoji ? (
         <Image boxSize={4} src={customEmoji[2]} />
       ) : emoji && !["+", "-"].includes(emoji) ? (
-        <Text>{emoji}</Text>
+        <Text fontSize="md">{emoji}</Text>
       ) : (
         <Icon as={icon} color={hasReacted ? highlighted : "currentColor"} />
       )}
@@ -58,35 +59,30 @@ function ReactionCount({ icon, count, reaction, ...rest }: ReactionCountProps) {
   );
 }
 
-interface ReactionsProps extends EventProps, StackProps {
-  reactions?: NDKKind[];
+interface ReactionCountsProps extends EventProps, StackProps {
+  kinds: NDKKind[];
+  events: ReactionEvents;
 }
 
-// todo: reply/quote
-
-export default function Reactions({
+export function ReactionCounts({
   event,
-  reactions: reactionKinds = defaultReactions,
+  kinds,
   components,
+  events,
   ...rest
-}: ReactionsProps) {
+}: ReactionCountsProps) {
   const zapModal = useDisclosure();
   const repostModal = useDisclosure();
   const reactionModal = useDisclosure();
   const replyModal = useDisclosure();
   const [session] = useSession();
   const pubkey = session?.pubkey;
-  const { zaps, reactions, replies, reposts } = useReactions(
-    event,
-    reactionKinds,
-  );
-  const { zapRequests, total } = useMemo(() => {
-    return zapsSummary(zaps);
-  }, [zaps]);
+  const { zaps, reactions, replies, reposts } = events;
+  const { zapRequests, total } = zaps;
 
   return (
     <HStack color="gray.500" fontSize="sm" spacing={6} {...rest}>
-      {reactionKinds.map((k) => {
+      {kinds.map((k) => {
         if (k === NDKKind.Text) {
           const reaction = replies.find((ev) => ev.pubkey === pubkey);
           return (
@@ -160,3 +156,24 @@ export default function Reactions({
     </HStack>
   );
 }
+
+interface ReactionsProps extends EventProps {
+  kinds?: NDKKind[];
+}
+
+// todo: only live when visible
+export default function Reactions({
+  event,
+  kinds = defaultReactions,
+  ...props
+}: ReactionsProps) {
+  const events = useReactions(event, kinds);
+
+  return (
+    <HStack w="100%" align="center" justifyContent="space-between">
+      <ReactionCounts event={event} kinds={kinds} events={events} {...props} />
+      <EventMenu event={event} kinds={kinds} events={events} />
+    </HStack>
+  );
+}
+// todo: Reactions + Menu as single component with one sub

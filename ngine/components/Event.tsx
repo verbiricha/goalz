@@ -1,10 +1,19 @@
 import { useMemo, createElement } from "react";
 import { NDKKind } from "@nostr-dev-kit/ndk";
 
-import { Note, EventProps, Components } from "@ngine/react";
+import {
+  Note,
+  Metadata,
+  UnknownKind,
+  EventProps,
+  Components,
+} from "@ngine/react";
 
 const defaultComponents = {
   [NDKKind.Text]: Note,
+  [NDKKind.Metadata]: Metadata,
+  // todo: app
+  // todo: contact list
 } as Components;
 
 export default function Event({ event, components, ...props }: EventProps) {
@@ -24,7 +33,7 @@ export default function Event({ event, components, ...props }: EventProps) {
         createElement(element, { ...props, event, components })
       );
     }
-    return null;
+    return createElement(UnknownKind, { ...props, event, components });
   }, [event, components]);
   return component;
 }

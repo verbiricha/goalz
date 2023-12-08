@@ -22,4 +22,20 @@ const note = definePartsStyle({
   },
 });
 
-export default defineMultiStyleConfig({ variants: { note } });
+const unknown = definePartsStyle({
+  container: {
+    boxShadow: "md",
+  },
+  header: {
+    paddingBottom: 0,
+  },
+  body: {
+    paddingY: "20px",
+    paddingX: "24px",
+  },
+  footer: {
+    paddingTop: 0,
+  },
+});
+
+export default defineMultiStyleConfig({ variants: { note, unknown } });

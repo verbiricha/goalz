@@ -10,7 +10,7 @@ import {
   ZapFast,
   UsersCheck,
   Rocket,
-} from "@ngine/icons";
+} from "@goalz/icons";
 
 const features = [
   {

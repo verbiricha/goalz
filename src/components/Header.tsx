@@ -2,7 +2,7 @@ import { Flex, HStack, Heading, Icon } from "@chakra-ui/react";
 
 import Login from "@goalz/components/Login";
 import Link from "@goalz/components/Link";
-import { Logo } from "@ngine/icons";
+import { Logo } from "@goalz/icons";
 
 export default function Header() {
   return (

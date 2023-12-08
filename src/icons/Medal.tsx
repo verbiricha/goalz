@@ -1,6 +1,6 @@
 import type { IconProps } from "@ngine/icons/props";
 
-export default function Medal(props: IconProps) {
+export function Medal(props: IconProps) {
   return (
     <svg
       width="24"

@@ -20,10 +20,9 @@ import {
 
 import Avatar from "@ngine/components/Avatar";
 import useSession from "@ngine/hooks/useSession";
-import { ChevronDown } from "@ngine/icons";
-import { User, Target, Users, Close } from "@ngine/icons";
+import { User, ChevronDown } from "@ngine/icons";
 
-import Trophy from "@goalz/icons/Trophy";
+import { Trophy, Users, Target, Close } from "@goalz/icons";
 import LoginDialog from "@goalz/components/LoginDialog";
 import CurrencySwitch from "./CurrencySwitch";
 import ColorModeSwitch from "./ColorModeSwitch";
