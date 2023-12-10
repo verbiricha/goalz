@@ -85,7 +85,7 @@ export default function ReplyModal({
           : []),
         ...tagged.map((pk) => ["p", pk]),
       ],
-      pubkey: session!.pubkey,
+      pubkey: session?.pubkey || "",
     });
   }, [event, comment, tagged, root, session]);
 
